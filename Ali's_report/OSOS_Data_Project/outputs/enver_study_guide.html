@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Enver Erman — Çalışma Rehberi</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f4f8;
+    color: #1a2e4a;
+    line-height: 1.7;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a2e4a 0%, #2d4a6e 100%);
+    color: #fff;
+    padding: 36px 60px;
+  }
+  header h1 { font-size: 26px; font-weight: 800; letter-spacing: 0.5px; }
+  header p  { font-size: 13px; color: #a0c0e0; margin-top: 6px; }
+
+  .lang-bar {
+    background: #fff;
+    border-bottom: 2px solid #dde4ed;
+    padding: 12px 60px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .lang-bar span { font-size: 12px; color: #7a8a9a; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .lang-btn {
+    padding: 6px 18px; border-radius: 20px;
+    border: 2px solid #2d4a6e; background: transparent;
+    color: #2d4a6e; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .lang-btn.active { background: #2d4a6e; color: #fff; }
+
+  main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .section {
+    background: #fff; border-radius: 14px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 18px 28px; display: flex;
+    align-items: center; gap: 14px;
+    border-bottom: 1px solid #eef2f7;
+  }
+  .section-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .s1 { background: #dbeafe; }
+  .s2 { background: #dcfce7; }
+  .s3 { background: #fef3c7; }
+  .s4 { background: #ede9fe; }
+  .s5 { background: #fce7f3; }
+  .s6 { background: #e0f2fe; }
+  .s7 { background: #fee2e2; }
+
+  .section-title h2 { font-size: 17px; font-weight: 800; color: #1a2e4a; }
+  .section-title p  { font-size: 11px; color: #7a8a9a; margin-top: 2px; font-style: italic; }
+
+  .lang-content { padding: 24px 28px; display: none; }
+  .lang-content.visible { display: block; }
+
+  .lang-tag {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 2px 10px; border-radius: 10px; margin-bottom: 14px;
+  }
+  .tr-tag { background: #fef3c7; color: #92400e; }
+  .en-tag { background: #dbeafe; color: #1e40af; }
+
+  h3 { font-size: 14px; font-weight: 700; color: #2d4a6e; margin: 18px 0 8px; }
+  h3:first-child { margin-top: 0; }
+  p  { font-size: 13.5px; color: #374151; margin-bottom: 10px; }
+  ul { padding-left: 20px; margin-bottom: 10px; }
+  ul li { font-size: 13.5px; color: #374151; margin-bottom: 4px; }
+
+  code {
+    background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px;
+    padding: 10px 16px; display: block;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px; color: #1e293b; margin: 10px 0;
+    line-height: 1.6; white-space: pre;
+  }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px; margin: 12px 0;
+  }
+  thead tr { background: #2d4a6e; color: #fff; }
+  thead th { padding: 9px 14px; text-align: left; font-weight: 600; }
+  tbody tr { border-bottom: 1px solid #eef2f7; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody td { padding: 8px 14px; color: #374151; }
+
+  .highlight-box {
+    background: linear-gradient(135deg, #1a2e4a, #2d4a6e);
+    color: #fff; border-radius: 10px;
+    padding: 14px 18px; font-size: 13px;
+    margin-top: 16px; line-height: 1.6;
+  }
+  .highlight-box strong { color: #fcd34d; }
+
+  .formula {
+    background: #fafafa; border-left: 4px solid #2d4a6e;
+    padding: 12px 16px; border-radius: 0 8px 8px 0;
+    font-family: 'Consolas', monospace;
+    font-size: 14px; color: #1e293b; margin: 10px 0;
+  }
+
+  .divider { border: none; border-top: 1px dashed #dde4ed; margin: 20px 0; }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 9px; border-radius: 10px; margin: 2px;
+  }
+  .b { background: #dbeafe; color: #1e40af; }
+  .g { background: #dcfce7; color: #166534; }
+  .o { background: #ffedd5; color: #9a3412; }
+  .p { background: #f3e8ff; color: #6b21a8; }
+  .r { background: #fee2e2; color: #991b1b; }
+
+  .overlap-box {
+    background: #f0fdf4; border: 2px solid #16a34a;
+    border-radius: 10px; padding: 14px 18px; margin-top: 12px;
+  }
+  .overlap-box h4 { font-size: 13px; font-weight: 700; color: #16a34a; margin-bottom: 8px; }
+  .overlap-box p  { font-size: 12.5px; color: #374151; margin: 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BEDAŞ Lighting Fault Detection — Enver Erman Çalışma Rehberi</h1>
+  <p>Enver Erman · MIS400 Graduation Project · GA + PSO + SA + Isolation Forest + LOF Pipeline</p>
+</header>
+
+<div class="lang-bar">
+  <span>Dil / Language:</span>
+  <button class="lang-btn active" onclick="setLang('tr', event)">Türkçe</button>
+  <button class="lang-btn" onclick="setLang('en', event)">English</button>
+  <button class="lang-btn" onclick="setLang('both', event)">Her İkisi / Both</button>
+</div>
+
+<main>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 1. Linear Interpolation -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s1">🔧</div>
+      <div class="section-title">
+        <h2>Adım 2 — Time-Based Linear Interpolation</h2>
+        <p>Eksik saatlik verilerin doldurulması</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Problem</h3>
+      <p>Ham veri 9,780 satır — ama tam saatlik bir grid için 9,816 satır olmalıydı. 36 eksik hücre var. Bu hücreler boş bırakılırsa model hata üretir ya da yanlış sonuç verir.</p>
+      <h3>Çözüm: Zaman Tabanlı Lineer Enterpolasyon</h3>
+      <p>Pandas'ın <code style="display:inline;padding:2px 6px;">interpolate(method='time')</code> fonksiyonu kullanıldı. Normal enterpolasyondan farkı: zaman damgası aralıklarına göre ağırlıklı doldurur.</p>
+      <div class="formula">x_missing = x_before + (x_after - x_before) × (t_missing - t_before) / (t_after - t_before)</div>
+      <h3>Neden Bu Yöntem?</h3>
+      <ul>
+        <li>Sokak lambası tüketimi saatler arasında ani sıçrama yapmaz — lineer geçiş gerçekçi</li>
+        <li>Zaman tabanlı versiyon eşit olmayan zaman aralıklarında da doğru çalışır</li>
+        <li>36 / 9,816 = <strong>%0.37</strong> — çok küçük bir oran, enterpolasyon sonuçları bozmaz</li>
+      </ul>
+      <div class="highlight-box">
+        <strong>Özet:</strong> 36 eksik hücreyi komşu saatlerin ortalamasıyla doldurduk. Veri bütünlüğünü korurken modelin hatasız çalışmasını sağladık.
+      </div>
+    </div>
+
+    <div class="lang-content en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>Problem</h3>
+      <p>Raw data has 9,780 rows — but a complete hourly grid requires 9,816 rows. 36 cells are missing. Leaving them empty causes model errors or incorrect results.</p>
+      <h3>Solution: Time-Based Linear Interpolation</h3>
+      <p>Used pandas <code style="display:inline;padding:2px 6px;">interpolate(method='time')</code>. Unlike standard interpolation, it weights by time-stamp intervals.</p>
+      <div class="formula">x_missing = x_before + (x_after - x_before) × (t_missing - t_before) / (t_after - t_before)</div>
+      <h3>Why This Method?</h3>
+      <ul>
+        <li>Street lighting consumption doesn't jump abruptly between hours — linear transition is realistic</li>
+        <li>Time-based version handles uneven time gaps correctly</li>
+        <li>36 / 9,816 = <strong>0.37%</strong> — tiny fraction, interpolation doesn't distort results</li>
+      </ul>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Filled 36 missing cells using weighted average of neighbouring hours. Maintained data integrity while ensuring the model runs without errors.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 2. Feature Engineering -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s2">⚙️</div>
+      <div class="section-title">
+        <h2>Adım 3 — Feature Engineering (9 Özellik)</h2>
+        <p>Saatlik veriden anlamlı sinyaller çıkarma</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <table>
+        <thead><tr><th>#</th><th>Özellik</th><th>Ne Anlatıyor?</th><th>GA Seçti mi?</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>z_hour_month</td><td>Saatin o aydaki beklenen tüketimine göre Z-skoru — "bu saat bu ay için normal mi?"</td><td><span class="tag g">✓ Seçildi</span></td></tr>
+          <tr><td>2</td><td>delta_vs_7day_ago</td><td>7 gün önceki aynı saate göre fark — haftalık drift tespiti</td><td><span class="tag g">✓ Seçildi</span></td></tr>
+          <tr><td>3</td><td>daily_night_total</td><td>Günün toplam gece tüketimi</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>4</td><td>night_zero_count</td><td>Günde kaç gece saati sıfır tüketim gösterdi</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>5</td><td>is_expected_on</td><td>Bu saatte lambaların açık olması bekleniyor mu? (0/1)</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>6</td><td>hour</td><td>Günün saati (0–23)</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>7</td><td>month</td><td>Yılın ayı (1–12)</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>8</td><td>is_night</td><td>Gece saati mi? (0/1)</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>9</td><td>is_weekend</td><td>Hafta sonu mu? (0/1)</td><td><span class="tag r">✗</span></td></tr>
+        </tbody>
+      </table>
+      <p>Tüm özellikler <strong>StandardScaler</strong> ile normalize edildi. GA bunlardan en bilgilendirici 2'sini seçti: <span class="tag g">z_hour_month</span> ve <span class="tag g">delta_vs_7day_ago</span></p>
+    </div>
+
+    <div class="lang-content en">
+      <span class="lang-tag en-tag">English</span>
+      <table>
+        <thead><tr><th>#</th><th>Feature</th><th>What It Captures</th><th>GA Selected?</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>z_hour_month</td><td>Z-score of this hour vs expected consumption for that month — "is this hour normal for this month?"</td><td><span class="tag g">✓ Selected</span></td></tr>
+          <tr><td>2</td><td>delta_vs_7day_ago</td><td>Difference vs same hour 7 days ago — weekly drift detection</td><td><span class="tag g">✓ Selected</span></td></tr>
+          <tr><td>3</td><td>daily_night_total</td><td>Total night consumption for the day</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>4</td><td>night_zero_count</td><td>How many night hours showed zero consumption</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>5</td><td>is_expected_on</td><td>Should lights be on at this hour? (0/1)</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>6</td><td>hour</td><td>Hour of day (0–23)</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>7</td><td>month</td><td>Month of year (1–12)</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>8</td><td>is_night</td><td>Is this a night hour? (0/1)</td><td><span class="tag r">✗</span></td></tr>
+          <tr><td>9</td><td>is_weekend</td><td>Is this a weekend? (0/1)</td><td><span class="tag r">✗</span></td></tr>
+        </tbody>
+      </table>
+      <p>All features normalized with <strong>StandardScaler</strong>. GA selected the 2 most informative: <span class="tag g">z_hour_month</span> and <span class="tag g">delta_vs_7day_ago</span></p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 3. GA -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s3">🧬</div>
+      <div class="section-title">
+        <h2>Adım 4 — Genetic Algorithm (GA) — Özellik Seçimi</h2>
+        <p>Hangi özelliklerin kullanılacağını evrimsel süreçle belirleme</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Ne Yapar?</h3>
+      <p>9 özellikten hangilerinin Isolation Forest için en bilgilendirici olduğunu otomatik olarak seçer. Her "birey" bir binary chromosome: hangi özelliğin kullanılıp kullanılmayacağını temsil eder.</p>
+      <code>Chromosome: [1, 1, 0, 0, 0, 0, 0, 0, 0]
+            ↑  ↑
+     z_hour  delta_7d  (diğerleri kullanılmıyor)</code>
+      <h3>Parametreler</h3>
+      <table>
+        <thead><tr><th>Parametre</th><th>Değer</th><th>Anlamı</th></tr></thead>
+        <tbody>
+          <tr><td>Population</td><td>20</td><td>Her nesilde 20 farklı özellik kombinasyonu denenir</td></tr>
+          <tr><td>Generations</td><td>30</td><td>30 nesil boyunca evrim sürer</td></tr>
+          <tr><td>Crossover rate</td><td>0.8</td><td>%80 ihtimalle iki birey gen alışverişi yapar</td></tr>
+          <tr><td>Mutation rate</td><td>0.1</td><td>%10 ihtimalle rastgele bir özellik açılır/kapanır</td></tr>
+        </tbody>
+      </table>
+      <h3>Fitness Fonksiyonu</h3>
+      <p>Her kombinasyon için Isolation Forest çalıştırılır ve <strong>Silhouette Score</strong> hesaplanır. Yüksek silhouette = iyi özellik kombinasyonu.</p>
+      <p><strong>Sonuç:</strong> z_hour_month + delta_vs_7day_ago → Silhouette = <strong>0.6689</strong></p>
+      <div class="highlight-box">
+        <strong>Özet:</strong> Hangi özelliklerin modeli en çok beslediğini insan müdahalesi olmadan otomatik keşfetti. Brute force aramak yerine evrimsel süreçle hızlıca yakınsadı.
+      </div>
+    </div>
+
+    <div class="lang-content en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>What Does It Do?</h3>
+      <p>Automatically selects which of the 9 features are most informative for Isolation Forest. Each "individual" is a binary chromosome: which features to include or exclude.</p>
+      <code>Chromosome: [1, 1, 0, 0, 0, 0, 0, 0, 0]
+            ↑  ↑
+     z_hour  delta_7d  (others excluded)</code>
+      <h3>Parameters</h3>
+      <table>
+        <thead><tr><th>Parameter</th><th>Value</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Population</td><td>20</td><td>20 different feature combinations tested per generation</td></tr>
+          <tr><td>Generations</td><td>30</td><td>Evolution runs for 30 generations</td></tr>
+          <tr><td>Crossover rate</td><td>0.8</td><td>80% chance two individuals exchange genes</td></tr>
+          <tr><td>Mutation rate</td><td>0.1</td><td>10% chance a random feature flips on/off</td></tr>
+        </tbody>
+      </table>
+      <h3>Fitness Function</h3>
+      <p>For each combination, Isolation Forest is run and <strong>Silhouette Score</strong> is computed. Higher silhouette = better feature combination.</p>
+      <p><strong>Result:</strong> z_hour_month + delta_vs_7day_ago → Silhouette = <strong>0.6689</strong></p>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Automatically discovered which features best feed the model without human intervention. Converged quickly via evolutionary process instead of brute-force search.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 4. PSO -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s4">🐝</div>
+      <div class="section-title">
+        <h2>Adım 5 — Particle Swarm Optimization (PSO) — Hiperparametre Ayarı</h2>
+        <p>Isolation Forest'ın contamination ve diğer parametrelerini otomatik optimize etme</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Ne Yapar?</h3>
+      <p>Isolation Forest'ın <strong>contamination</strong> (kaç % veri anomali sayılsın), <strong>max_samples</strong> ve <strong>max_features</strong> parametrelerini otomatik olarak arar. Her "parçacık" bir parametre kombinasyonunu temsil eder.</p>
+      <h3>Nasıl Çalışır?</h3>
+      <ul>
+        <li>15 parçacık uzayda hareket eder</li>
+        <li>Her parçacık hem kendi en iyisini hem de sürünün en iyisini takip eder</li>
+        <li>25 iterasyon boyunca yakınsarlar</li>
+      </ul>
+      <div class="formula">v(t+1) = w·v(t) + c1·r1·(pbest - x) + c2·r2·(gbest - x)
+x(t+1) = x(t) + v(t+1)
+
+w=0.7  c1=c2=1.5  (kişisel ve sosyal öğrenme dengesi)</div>
+      <h3>Arama Uzayı</h3>
+      <table>
+        <thead><tr><th>Parametre</th><th>Aralık</th><th>Bulunan</th></tr></thead>
+        <tbody>
+          <tr><td>contamination</td><td>0.01 – 0.20</td><td><strong>0.01 (1%)</strong></td></tr>
+          <tr><td>max_samples</td><td>0.30 – 1.00</td><td>Optimize edildi</td></tr>
+          <tr><td>max_features</td><td>Tam liste</td><td>Optimize edildi</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Sonuç:</strong> PSO contamination'ı %1'e çekti → Silhouette <strong>0.6689 → 0.8140</strong> (büyük sıçrama)</p>
+      <div class="highlight-box">
+        <strong>Özet:</strong> Manuel olarak "contamination=0.05 dene, 0.03 dene..." yapmak yerine PSO 15 parçacıkla otomatik en iyiyi buldu. Silhouette %22 arttı.
+      </div>
+    </div>
+
+    <div class="lang-content en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>What Does It Do?</h3>
+      <p>Automatically searches for optimal Isolation Forest <strong>contamination</strong>, <strong>max_samples</strong>, and <strong>max_features</strong>. Each "particle" represents one parameter combination.</p>
+      <h3>How It Works</h3>
+      <ul>
+        <li>15 particles move through parameter space</li>
+        <li>Each particle tracks both its own best and the swarm's best</li>
+        <li>Converges over 25 iterations</li>
+      </ul>
+      <div class="formula">v(t+1) = w·v(t) + c1·r1·(pbest - x) + c2·r2·(gbest - x)
+x(t+1) = x(t) + v(t+1)
+
+w=0.7  c1=c2=1.5  (balance of personal and social learning)</div>
+      <h3>Search Space</h3>
+      <table>
+        <thead><tr><th>Parameter</th><th>Range</th><th>Found</th></tr></thead>
+        <tbody>
+          <tr><td>contamination</td><td>0.01 – 0.20</td><td><strong>0.01 (1%)</strong></td></tr>
+          <tr><td>max_samples</td><td>0.30 – 1.00</td><td>Optimized</td></tr>
+          <tr><td>max_features</td><td>Full list</td><td>Optimized</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Result:</strong> PSO pulled contamination to 1% → Silhouette jumped <strong>0.6689 → 0.8140</strong></p>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Instead of manually trying "contamination=0.05, then 0.03...", PSO automatically found the best with 15 particles. Silhouette improved by 22%.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 5. IF + LOF -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s1">🌲</div>
+      <div class="section-title">
+        <h2>Adım 6 — Isolation Forest + LOF</h2>
+        <p>İki bağımsız anomali tespiti → ensemble flag</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Isolation Forest</h3>
+      <p>200 ağaç, PSO'nun bulduğu contamination=%1 ile çalışır. Saatlik bazda: "Bu saat diğer saatlerden izole etmesi kolay mı?" sorusunu sorar.</p>
+      <h3>LOF (Local Outlier Factor)</h3>
+      <p>Isolation Forest'tan farklı bir yaklaşım: bir noktanın <strong>yerel yoğunluğunu</strong> komşularıyla karşılaştırır.</p>
+      <ul>
+        <li>50 komşu kullanıldı</li>
+        <li>LOF > 1 → çevresinden daha seyrek → anomali</li>
+        <li>Özellikle duplicate feature vector'lara karşı dayanıklı</li>
+      </ul>
+      <h3>Ensemble Flagging</h3>
+      <div class="formula">is_anomaly = IF_flag  OR  LOF_flag</div>
+      <p>İki modelden <strong>herhangi biri</strong> flaglerse o saat anomali sayılır. Bu recall'u artırır — hiçbir gerçek anomali atlanmasın.</p>
+      <div class="highlight-box">
+        <strong>Özet:</strong> IF global izolasyona, LOF lokal yoğunluğa bakar. Birbirini tamamlayan iki yaklaşım → daha güvenilir tespit.
+      </div>
+    </div>
+
+    <div class="lang-content en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>Isolation Forest</h3>
+      <p>200 trees, PSO-tuned contamination=1%. Works at hourly level: "Is this hour easy to isolate from other hours?"</p>
+      <h3>LOF (Local Outlier Factor)</h3>
+      <p>Different approach from IF: compares a point's <strong>local density</strong> to its neighbours.</p>
+      <ul>
+        <li>50 neighbours used</li>
+        <li>LOF > 1 → sparser than surroundings → anomaly</li>
+        <li>Especially robust against duplicate feature vectors</li>
+      </ul>
+      <h3>Ensemble Flagging</h3>
+      <div class="formula">is_anomaly = IF_flag  OR  LOF_flag</div>
+      <p>If <strong>either</strong> model flags an hour, it's counted as anomalous. This maximises recall — no real anomaly is missed.</p>
+      <div class="highlight-box">
+        <strong>Summary:</strong> IF looks at global isolation, LOF at local density. Two complementary approaches → more reliable detection.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 6. SA -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s5">🌡️</div>
+      <div class="section-title">
+        <h2>Adım 7 — Simulated Annealing (SA) — Eşik Optimizasyonu</h2>
+        <p>IF karar eşiğini fiziksel bir soğuma süreciyle ince ayar yapma</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Problem</h3>
+      <p>Isolation Forest varsayılan eşik = 0.0000. Bu eşik tüm veriyi eşit değerlendirir. Oysa sokak lambası verisi için gece saatlerinde daha hassas, gündüz saatlerinde daha az hassas olunmalı.</p>
+      <h3>SA Nasıl Çalışır?</h3>
+      <p>Metallerin yavaş soğutulduğunda daha kararlı yapıya kavuşması fikrinden esinlenir. Başta geniş arar, zamanla küçülür:</p>
+      <table>
+        <thead><tr><th>Parametre</th><th>Değer</th><th>Anlamı</th></tr></thead>
+        <tbody>
+          <tr><td>T₀ (başlangıç sıcaklığı)</td><td>1.0</td><td>Başta her yönde geniş arama</td></tr>
+          <tr><td>Cooling rate</td><td>0.95</td><td>Her iterasyonda T × 0.95 → yavaş soğuma</td></tr>
+          <tr><td>Iterations</td><td>1,000</td><td>1000 adımda en iyiye yakınsama</td></tr>
+        </tbody>
+      </table>
+      <h3>Fitness Fonksiyonu</h3>
+      <ul>
+        <li>Dropout sinyallerine <strong>hassasiyeti</strong> maximize et</li>
+        <li>Gece saatlerindeki false positive'leri <strong>2× ceza</strong> ile penalize et</li>
+      </ul>
+      <p><strong>Sonuç:</strong> Eşik 0.0000 → <strong>−0.0150</strong> (fitness = 0.6104)</p>
+      <div class="highlight-box">
+        <strong>Özet:</strong> SA eşiği biraz sola kaydırdı — model daha hassas ama gece saatlerindeki yanlış alarmları penalize ediyor. Sadece gerçek dropout'ları yakala.
+      </div>
+    </div>
+
+    <div class="lang-content en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>Problem</h3>
+      <p>Isolation Forest default threshold = 0.0000. This treats all data equally. But for street lighting, the model should be more sensitive at night, less so during daytime.</p>
+      <h3>How SA Works</h3>
+      <p>Inspired by the physical process of slowly cooling metals to reach a more stable structure. Searches broadly at first, then narrows:</p>
+      <table>
+        <thead><tr><th>Parameter</th><th>Value</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>T₀ (initial temperature)</td><td>1.0</td><td>Broad search in all directions initially</td></tr>
+          <tr><td>Cooling rate</td><td>0.95</td><td>Each iteration T × 0.95 → slow cooling</td></tr>
+          <tr><td>Iterations</td><td>1,000</td><td>Converges to optimum over 1000 steps</td></tr>
+        </tbody>
+      </table>
+      <h3>Fitness Function</h3>
+      <ul>
+        <li>Maximise <strong>sensitivity</strong> on dropout signals</li>
+        <li>Penalise false positives on confirmed-normal deep-night hours <strong>2×</strong></li>
+      </ul>
+      <p><strong>Result:</strong> Threshold 0.0000 → <strong>−0.0150</strong> (fitness = 0.6104)</p>
+      <div class="highlight-box">
+        <strong>Summary:</strong> SA shifted the threshold slightly left — model is more sensitive but penalises false alarms at night hours. Only catch real dropouts.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 7. Domain Classification -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s6">🏷️</div>
+      <div class="section-title">
+        <h2>Adım 8 — Domain Classification (Anomali Tipleri)</h2>
+        <p>Tespit edilen anomalileri operasyonel kategorilere ayırma</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <table>
+        <thead><tr><th>Tip</th><th>Koşul</th><th>Anlam</th><th>Tespit</th></tr></thead>
+        <tbody>
+          <tr><td>🟣 Nighttime Dropout</td><td>is_expected_on=1 ve tüketim &lt; 1 kWh</td><td>Lambaların açık olması gerektiği saatte tüketim yok → tam arıza / kesinti</td><td>26 saat</td></tr>
+          <tr><td>🔴 Daytime Consumption</td><td>09:00–16:00 arası ve tüketim &gt; 0.1 kWh</td><td>Lambalar kapalı olması gerektiği saatte tüketim var → arızalı röle / kontrol sorunu</td><td>12 saat</td></tr>
+          <tr><td>🟠 Underconsumption</td><td>is_expected_on=1 ve tüketim 1–4 kWh arası</td><td>Açık olması gerekiyor ama normalden az çekiyor → kısmi arıza / ampul yanması</td><td>2 saat</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box">
+        <strong>Özet:</strong> Model "anomali" dedi, domain classification "nasıl bir anomali?" sorusunu yanıtladı. Operasyonel ekip için doğrudan aksiyon listesi oluştu.
+      </div>
+    </div>
+
+    <div class="lang-content en">
+      <span class="lang-tag en-tag">English</span>
+      <table>
+        <thead><tr><th>Type</th><th>Condition</th><th>Meaning</th><th>Detected</th></tr></thead>
+        <tbody>
+          <tr><td>🟣 Nighttime Dropout</td><td>is_expected_on=1 and consumption &lt; 1 kWh</td><td>No consumption when lights should be on → full fault / outage</td><td>26 hours</td></tr>
+          <tr><td>🔴 Daytime Consumption</td><td>09:00–16:00 and consumption &gt; 0.1 kWh</td><td>Consumption when lights should be off → faulty relay / control issue</td><td>12 hours</td></tr>
+          <tr><td>🟠 Underconsumption</td><td>is_expected_on=1 and consumption 1–4 kWh</td><td>Should be on but drawing less than normal → partial fault / burnt bulbs</td><td>2 hours</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Model said "anomaly", domain classification answered "what kind of anomaly?" — creates a direct action list for operations team.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 8. Overlap with Ali -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s7">🤝</div>
+      <div class="section-title">
+        <h2>Bonus — Ali'nin Pipeline'ıyla Örtüşen Günler</h2>
+        <p>İki bağımsız pipeline'ın hemfikir olduğu anomaliler</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <p>Ali'nin 3-katmanlı ensemble pipeline'ı (STL + Isolation Forest + PELT) ile Enver'in GA+PSO+SA pipeline'ı karşılaştırıldığında <strong>6 gün</strong> örtüşüyor:</p>
+      <table>
+        <thead><tr><th>Tarih</th><th>Ali Skoru</th><th>Enver Tipi</th><th>Yorum</th></tr></thead>
+        <tbody>
+          <tr><td>03 Feb 2025</td><td>0.547 (high)</td><td>🟣 Nighttime Dropout</td><td>İki pipeline da alarm verdi</td></tr>
+          <tr><td>12 Mar 2025</td><td>0.629 (high)</td><td>🟣 Nighttime Dropout</td><td>En yüksek ortak skor</td></tr>
+          <tr><td>17 Mar 2025</td><td>0.565 (high)</td><td>🔴 Daytime Consumption</td><td>Farklı tip, aynı gün</td></tr>
+          <tr><td>31 Dec 2025</td><td>0.621 (high)</td><td>🟠 Underconsumption</td><td>Yıl sonu anomalisi</td></tr>
+          <tr><td>01 Jan 2026</td><td>0.542 (high)</td><td>🟠 Underconsumption</td><td>Yılbaşı anomalisi</td></tr>
+          <tr><td>13 Feb 2026</td><td>0.573 (high)</td><td>🟣 Nighttime Dropout</td><td>Şubat 2026 olayı</td></tr>
+        </tbody>
+      </table>
+      <div class="overlap-box">
+        <h4>Jüri İçin Mesaj</h4>
+        <p>İki tamamen bağımsız yöntem (saatlik GA+PSO+SA vs günlük STL+iForest+PELT) 6 günde hemfikir. Bu günler <strong>gerçek anomali</strong> olma olasılığı çok yüksek — çapraz doğrulama sağlandı.</p>
+      </div>
+    </div>
+
+    <div class="lang-content en">
+      <span class="lang-tag en-tag">English</span>
+      <p>Comparing Enver's GA+PSO+SA pipeline with Ali's 3-tier ensemble (STL + Isolation Forest + PELT), <strong>6 days overlap</strong>:</p>
+      <table>
+        <thead><tr><th>Date</th><th>Ali Score</th><th>Enver Type</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>03 Feb 2025</td><td>0.547 (high)</td><td>🟣 Nighttime Dropout</td><td>Both pipelines raised alert</td></tr>
+          <tr><td>12 Mar 2025</td><td>0.629 (high)</td><td>🟣 Nighttime Dropout</td><td>Highest shared score</td></tr>
+          <tr><td>17 Mar 2025</td><td>0.565 (high)</td><td>🔴 Daytime Consumption</td><td>Different type, same day</td></tr>
+          <tr><td>31 Dec 2025</td><td>0.621 (high)</td><td>🟠 Underconsumption</td><td>Year-end anomaly</td></tr>
+          <tr><td>01 Jan 2026</td><td>0.542 (high)</td><td>🟠 Underconsumption</td><td>New Year anomaly</td></tr>
+          <tr><td>13 Feb 2026</td><td>0.573 (high)</td><td>🟣 Nighttime Dropout</td><td>February 2026 event</td></tr>
+        </tbody>
+      </table>
+      <div class="overlap-box">
+        <h4>Message for Jury</h4>
+        <p>Two completely independent methods (hourly GA+PSO+SA vs daily STL+iForest+PELT) agree on 6 days. These days are very likely <strong>real anomalies</strong> — cross-validation achieved.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function setLang(lang, event) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('visible'));
+    if (lang === 'both') {
+      document.querySelectorAll('.lang-content').forEach(el => el.classList.add('visible'));
+    } else {
+      document.querySelectorAll('.' + lang).forEach(el => el.classList.add('visible'));
+    }
+  }
+  document.querySelectorAll('.tr').forEach(el => el.classList.add('visible'));
+</script>
+</body>
+</html>

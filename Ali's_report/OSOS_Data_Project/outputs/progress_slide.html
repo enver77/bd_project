@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Progress SlideWhat We Did & What's Next</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #1a1a2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .slide {
+    width: 1280px;
+    height: 720px;
+    background: #f4f6f9;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .deco-circle-tl {
+    position: absolute; top: -60px; left: -60px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: #b8c8d8; opacity: 0.4; z-index: 0;
+  }
+  .deco-circle-br {
+    position: absolute; bottom: -70px; right: -70px;
+    width: 230px; height: 230px; border-radius: 50%;
+    background: #b8c8d8; opacity: 0.3; z-index: 0;
+  }
+  .deco-line {
+    position: absolute; bottom: 28px; left: 40px; right: 40px;
+    height: 2px; background: linear-gradient(to right, #2d4a6e, #b8c8d8); z-index: 0;
+  }
+  .deco-dot-left  { position: absolute; bottom: 22px; left: 40px;  width: 14px; height: 14px; border-radius: 50%; background: #2d4a6e; z-index: 1; }
+  .deco-dot-right { position: absolute; bottom: 22px; right: 40px; width: 14px; height: 14px; border-radius: 50%; background: #2d4a6e; z-index: 1; }
+
+  /* Header */
+  .header {
+    position: relative; z-index: 2;
+    padding: 18px 48px 10px 48px;
+    border-bottom: 3px solid #2d4a6e;
+    display: flex; align-items: baseline; gap: 16px;
+  }
+  .header-title { font-size: 21px; font-weight: 800; color: #1a2e4a; text-transform: uppercase; letter-spacing: 0.5px; }
+  .header-sub   { font-size: 12px; color: #5a7a9a; }
+  .header-badge { margin-left: auto; background: #2d4a6e; color: #fff; font-size: 11px; font-weight: 600; padding: 4px 14px; border-radius: 20px; }
+
+  /* Body */
+  .body {
+    flex: 1; display: flex; padding: 14px 48px 48px 48px;
+    gap: 24px; z-index: 2; position: relative;
+  }
+
+  /* ── LEFT COLUMN ── */
+  .col-left { flex: 0 0 390px; display: flex; flex-direction: column; gap: 10px; }
+
+  .col-title {
+    font-size: 12px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 5px 12px;
+    border-radius: 6px; display: flex; align-items: center; gap: 6px;
+  }
+  .done-title { background: #dcfce7; color: #166534; }
+  .next-title { background: #dbeafe; color: #1e40af; }
+
+  .card {
+    background: #fff; border-radius: 10px;
+    border: 1px solid #dde4ed;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 7px 12px;
+    font-size: 11px; font-weight: 700; color: #fff;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .card-body { padding: 8px 12px; }
+
+  .ch-data    { background: #475569; }
+  .ch-sena    { background: #7c3aed; }
+  .ch-feza    { background: #0891b2; }
+  .ch-enver   { background: #16a34a; }
+  .ch-ali     { background: #2d4a6e; }
+  .ch-cross   { background: #b45309; }
+
+  .row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 3px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .row-text { font-size: 11.5px; color: #374151; line-height: 1.4; }
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 1px 7px; border-radius: 8px; margin-left: 4px;
+  }
+  .bd-purple  { background: #f3e8ff; color: #6b21a8; }
+  .bd-teal    { background: #cffafe; color: #0e7490; }
+  .bd-green   { background: #dcfce7; color: #166534; }
+  .bd-blue    { background: #dbeafe; color: #1e40af; }
+  .bd-orange  { background: #ffedd5; color: #9a3412; }
+  .bd-gold    { background: #fef9c3; color: #854d0e; }
+
+  /* Next steps */
+  .next-card {
+    background: #fff; border-radius: 10px;
+    border: 1px solid #dde4ed;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    padding: 10px 14px;
+  }
+  .next-item {
+    display: flex; align-items: flex-start; gap: 9px;
+    padding: 6px 0; border-bottom: 1px solid #f1f5f9;
+  }
+  .next-item:last-child { border-bottom: none; }
+  .next-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #2d4a6e; color: #fff;
+    font-size: 10px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .next-text { font-size: 12px; color: #374151; line-height: 1.4; }
+  .next-text strong { color: #1a2e4a; }
+
+  /* ── MIDDLE DIVIDER ── */
+  .divider-col {
+    width: 2px; background: #dde4ed;
+    margin: 0; flex-shrink: 0;
+  }
+
+  /* ── RIGHT COLUMN ── */
+  .col-right { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+  .cross-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #5a7a9a; }
+
+  .venn-card {
+    background: #fff; border-radius: 10px; border: 1px solid #dde4ed;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06); padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .pipeline-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pr-label {
+    font-size: 11px; font-weight: 700; width: 130px; flex-shrink: 0;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .pr-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .pr-days { display: flex; flex-wrap: wrap; gap: 4px; }
+  .day-chip {
+    font-size: 10px; font-weight: 600; padding: 2px 8px;
+    border-radius: 6px; border: 1px solid;
+  }
+  .chip-ali    { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .chip-enver  { background: #dcfce7; color: #166534; border-color: #86efac; }
+  .chip-sena   { background: #f3e8ff; color: #6b21a8; border-color: #c4b5fd; }
+  .chip-shared { background: #fef9c3; color: #854d0e; border-color: #fcd34d; font-weight: 800; }
+  .chip-all3   { background: #fef3c7; color: #92400e; border-color: #f59e0b; font-weight: 900; }
+
+  .sep { border: none; border-top: 1px dashed #e2e8f0; margin: 2px 0; }
+
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .sum-card {
+    border-radius: 10px; padding: 12px 14px; text-align: center;
+    border: 1px solid #dde4ed;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .sum-num  { font-size: 28px; font-weight: 900; line-height: 1; }
+  .sum-label { font-size: 10px; color: #7a8a9a; margin-top: 4px; line-height: 1.4; }
+
+  .key-box {
+    background: linear-gradient(135deg, #1a2e4a, #2d4a6e);
+    border-radius: 10px; padding: 12px 16px; color: #fff;
+    font-size: 12px; line-height: 1.6;
+  }
+  .key-box strong { color: #fcd34d; }
+
+  .overlap-chip {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 9px;
+    border-radius: 8px; background: rgba(255,255,255,0.15);
+    color: #fff; border: 1px solid rgba(255,255,255,0.3); margin: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <div class="deco-circle-tl"></div>
+  <div class="deco-circle-br"></div>
+  <div class="deco-line"></div>
+  <div class="deco-dot-left"></div>
+  <div class="deco-dot-right"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">Progress Update</div>
+    <div class="header-sub">MIS400 Graduation Project</div>
+    <div class="header-badge">MIS400Team</div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+
+    <!-- LEFT: What We Did -->
+    <div class="col-left">
+
+      <div class="col-title done-title">What We Have Done</div>
+
+      <!-- Data -->
+      <div class="card">
+        <div class="card-header ch-data">Data & Preprocessing</div>
+        <div class="card-body">
+          <div class="row"><div class="dot" style="background:#475569"></div>
+            <div class="row-text">9,816 hourly OSOS records cleaned and structured</div>
+          </div>
+          <div class="row"><div class="dot" style="background:#475569"></div>
+            <div class="row-text">Missing values filled via time-based linear interpolation</div>
+          </div>
+          <div class="row"><div class="dot" style="background:#475569"></div>
+            <div class="row-text">Daily feature table built for each street lighting line</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anomaly Detection -->
+      <div class="card">
+        <div class="card-header ch-ali">Anomaly Detection &nbsp;|&nbsp; 3 Independent Approaches</div>
+        <div class="card-body">
+          <div class="row"><div class="dot" style="background:#16a34a"></div>
+            <div class="row-text"><strong>GA + PSO + SA optimised IF + LOF</strong> &nbsp; heuristic-tuned pipeline &nbsp; <span class="badge bd-green">16 anomaly days</span> &nbsp; Silhouette 0.814</div>
+          </div>
+          <div class="row"><div class="dot" style="background:#2d4a6e"></div>
+            <div class="row-text"><strong>3-Tier Ensemble (STL + CUSUM + iForest + PELT)</strong> &nbsp; daily-level &nbsp; <span class="badge bd-blue">9 high-confidence days</span> &nbsp; Jaccard 0.922</div>
+          </div>
+          <div class="row"><div class="dot" style="background:#7c3aed"></div>
+            <div class="row-text"><strong>Isolation Forest + GAF Transformation</strong> &nbsp; hourly detection &nbsp; <span class="badge bd-purple">294 anomalous observations</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cross-validation -->
+      <div class="card">
+        <div class="card-header ch-cross">Cross-Pipeline Validation</div>
+        <div class="card-body">
+          <div class="row"><div class="dot" style="background:#b45309"></div>
+            <div class="row-text">GA+PSO+SA pipeline and 3-Tier Ensemble agree on <strong>6 anomaly days</strong></div>
+          </div>
+          <div class="row"><div class="dot" style="background:#b45309"></div>
+            <div class="row-text">GAF structural analysis aligns with the 9 high-confidence anomaly days from the 3-Tier Ensemble</div>
+          </div>
+          <div class="row"><div class="dot" style="background:#b45309"></div>
+            <div class="row-text">31 Dec 2025 and 01 Jan 2026 flagged by all 3 approaches simultaneously</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="divider-col"></div>
+
+    <!-- RIGHT: What Comes Next -->
+    <div class="col-right">
+      <div class="col-title next-title">What Comes Next</div>
+
+      <div class="next-card" style="flex:1;">
+
+        <div class="next-item">
+          <div class="next-num">1</div>
+          <div class="next-text">
+            <strong>Consolidate Findings into a Single Report</strong><br/>
+            Merge outputs of all methods into a unified anomaly list with confidence scores and type labels
+          </div>
+        </div>
+        <div class="next-item">
+          <div class="next-num">2</div>
+          <div class="next-text">
+            <strong>Comprehensive Ground Truth Evaluation</strong><br/>
+            Measure Precision, Recall and F1 across all pipelines against rpt-300 outage records
+          </div>
+        </div>
+        <div class="next-item">
+          <div class="next-num">3</div>
+          <div class="next-text">
+            <strong>Pipeline Consolidation + Heuristic Optimization</strong><br/>
+            Reduce to a single unified pipeline and apply heuristic tuning across all models with Prof. Oğuzhan Ceylan's guidance
+          </div>
+        </div>
+        <div class="next-item">
+          <div class="next-num">4</div>
+          <div class="next-text">
+            <strong>Scale to Multiple Lines</strong><br/>
+            Validate the unified pipeline on additional BEDAŞ street lighting lines
+          </div>
+        </div>
+
+        <div class="next-item">
+          <div class="next-num">5</div>
+          <div class="next-text">
+            <strong>Operational Dashboard for BEDAŞ</strong><br/>
+            Web-based interface for anomaly reports, line status and fault history
+          </div>
+        </div>
+        <div class="next-item">
+          <div class="next-num">6</div>
+          <div class="next-text">
+            <strong>Academic Paper</strong><br/>
+            Two journal submissions planned: first by end of May 2026, second by August 2026
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

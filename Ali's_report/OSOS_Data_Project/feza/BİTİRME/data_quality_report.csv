@@ -1,0 +1,9 @@
+Metric,Value
+Total_Days,409.0
+Complete_Days,399.0
+Partial_Missing_Days,8.0
+Data_Quality_Low_Days,2.0
+Total_Missing_Hours,36.0
+Outage_Related_Missing,0.0
+Unknown_Missing,36.0
+Completeness_Pct,97.56

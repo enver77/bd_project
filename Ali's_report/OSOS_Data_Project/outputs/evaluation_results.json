@@ -1,0 +1,171 @@
+{
+  "threshold_analysis": {
+    "0.1": {
+      "threshold": 0.1,
+      "tp": 2,
+      "fp": 151,
+      "fn": 4,
+      "tn": 267,
+      "precision": 0.0131,
+      "recall": 0.3333,
+      "f1_score": 0.0252,
+      "n_ground_truth_days": 6,
+      "n_detected": 153,
+      "detected_gt_dates": [
+        "2025-01-09",
+        "2025-05-12"
+      ],
+      "missed_gt_dates": [
+        "2025-04-25",
+        "2025-08-01",
+        "2025-08-24",
+        "2025-08-25"
+      ]
+    },
+    "0.15": {
+      "threshold": 0.15,
+      "tp": 1,
+      "fp": 111,
+      "fn": 5,
+      "tn": 307,
+      "precision": 0.0089,
+      "recall": 0.1667,
+      "f1_score": 0.0169,
+      "n_ground_truth_days": 6,
+      "n_detected": 112,
+      "detected_gt_dates": [
+        "2025-05-12"
+      ],
+      "missed_gt_dates": [
+        "2025-01-09",
+        "2025-04-25",
+        "2025-08-01",
+        "2025-08-24",
+        "2025-08-25"
+      ]
+    },
+    "0.2": {
+      "threshold": 0.2,
+      "tp": 1,
+      "fp": 99,
+      "fn": 5,
+      "tn": 319,
+      "precision": 0.01,
+      "recall": 0.1667,
+      "f1_score": 0.0189,
+      "n_ground_truth_days": 6,
+      "n_detected": 100,
+      "detected_gt_dates": [
+        "2025-05-12"
+      ],
+      "missed_gt_dates": [
+        "2025-01-09",
+        "2025-04-25",
+        "2025-08-01",
+        "2025-08-24",
+        "2025-08-25"
+      ]
+    },
+    "0.25": {
+      "threshold": 0.25,
+      "tp": 1,
+      "fp": 91,
+      "fn": 5,
+      "tn": 327,
+      "precision": 0.0109,
+      "recall": 0.1667,
+      "f1_score": 0.0204,
+      "n_ground_truth_days": 6,
+      "n_detected": 92,
+      "detected_gt_dates": [
+        "2025-05-12"
+      ],
+      "missed_gt_dates": [
+        "2025-01-09",
+        "2025-04-25",
+        "2025-08-01",
+        "2025-08-24",
+        "2025-08-25"
+      ]
+    },
+    "0.35": {
+      "threshold": 0.35,
+      "tp": 0,
+      "fp": 67,
+      "fn": 6,
+      "tn": 351,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "n_ground_truth_days": 6,
+      "n_detected": 67,
+      "detected_gt_dates": [],
+      "missed_gt_dates": [
+        "2025-01-09",
+        "2025-04-25",
+        "2025-05-12",
+        "2025-08-01",
+        "2025-08-24",
+        "2025-08-25"
+      ]
+    },
+    "0.5": {
+      "threshold": 0.5,
+      "tp": 0,
+      "fp": 22,
+      "fn": 6,
+      "tn": 396,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "n_ground_truth_days": 6,
+      "n_detected": 22,
+      "detected_gt_dates": [],
+      "missed_gt_dates": [
+        "2025-01-09",
+        "2025-04-25",
+        "2025-05-12",
+        "2025-08-01",
+        "2025-08-24",
+        "2025-08-25"
+      ]
+    }
+  },
+  "silhouette": {
+    "silhouette_score": 0.5086
+  },
+  "inter_method_agreement": {
+    "t1_flagged": 96,
+    "t3_flagged": 20,
+    "intersection": 4,
+    "union": 112,
+    "agreement_rate_jaccard": 0.0357
+  },
+  "physical_plausibility": {
+    "n_flagged": 67,
+    "n_physically_supported": 34,
+    "phys_support_rate": 0.5075
+  },
+  "bootstrap_stability": {
+    "jaccard_pairs": {
+      "42_vs_7": 1.0,
+      "42_vs_13": 0.9130434782608695,
+      "42_vs_99": 0.9130434782608695,
+      "42_vs_2025": 0.9130434782608695,
+      "7_vs_13": 0.9130434782608695,
+      "7_vs_99": 0.9130434782608695,
+      "7_vs_2025": 0.9130434782608695,
+      "13_vs_99": 0.9130434782608695,
+      "13_vs_2025": 0.9130434782608695,
+      "99_vs_2025": 0.9130434782608695
+    },
+    "avg_jaccard": 0.9217391304347824
+  },
+  "detectability_note": "Ground truth outages in rpt-300 are predominantly daytime events (5/6 unique days have outage windows outside active street-light hours). Only 2025-05-12 (nighttime outage 04:47-06:46) has a measurable impact on daily consumption aggregate. Low recall at standard thresholds reflects this inherent detectability gap, not a method failure.",
+  "summary": {
+    "best_threshold": 0.1,
+    "precision": 0.0131,
+    "recall": 0.3333,
+    "f1_score": 0.0252
+  }
+}

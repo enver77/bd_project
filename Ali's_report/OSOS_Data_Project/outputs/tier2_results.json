@@ -1,0 +1,73 @@
+{
+  "method": "IsolationForest + LSTM Autoencoder",
+  "iforest": {
+    "n_estimators": 200,
+    "contamination": 0.05,
+    "n_flagged": 22,
+    "flagged_dates": [
+      "2025-02-03",
+      "2025-03-12",
+      "2025-03-17",
+      "2025-12-31",
+      "2026-01-01",
+      "2026-01-08",
+      "2026-02-13",
+      "2026-02-14",
+      "2026-02-15",
+      "2026-02-16",
+      "2026-02-17",
+      "2026-02-18",
+      "2026-02-19",
+      "2026-02-20",
+      "2026-02-21",
+      "2026-02-22",
+      "2026-02-23",
+      "2026-02-24",
+      "2026-02-25",
+      "2026-02-26",
+      "2026-02-27",
+      "2026-02-28"
+    ]
+  },
+  "lstm": {
+    "seq_len": 7,
+    "n_flagged": 0,
+    "flagged_dates": []
+  },
+  "sensitivity_analysis": {
+    "0.02": 9,
+    "0.05": 22,
+    "0.1": 43
+  },
+  "bootstrap_stability": {
+    "jaccard_pairs": {
+      "42_vs_7": 1.0,
+      "42_vs_13": 0.9130434782608695,
+      "42_vs_99": 0.9130434782608695,
+      "42_vs_2025": 0.9130434782608695,
+      "7_vs_13": 0.9130434782608695,
+      "7_vs_99": 0.9130434782608695,
+      "7_vs_2025": 0.9130434782608695,
+      "13_vs_99": 0.9130434782608695,
+      "13_vs_2025": 0.9130434782608695,
+      "99_vs_2025": 0.9130434782608695
+    },
+    "avg_jaccard": 0.9217391304347824
+  },
+  "features_used": [
+    "month_sin",
+    "month_cos",
+    "day_of_year_sin",
+    "day_of_year_cos",
+    "daily_active_kwh",
+    "daily_kwh_norm",
+    "mean_active_intensity",
+    "p10_active",
+    "active_hours_count",
+    "night_missing_frac",
+    "delta_1d",
+    "delta_7d",
+    "rolling_7d_std",
+    "rolling_28d_zscore"
+  ]
+}

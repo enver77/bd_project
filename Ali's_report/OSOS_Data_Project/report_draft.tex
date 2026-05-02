@@ -1,0 +1,85 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{parskip}
+
+\title{Anomaly Detection on BEDAŞ Street Lighting Data \\ \large A Three-Tier Predictive Maintenance Approach}
+\author{Ali Gökay Bozok \\ Kadir Has University}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Street lighting is an important public service. When a lamp or a line fails, it can be dangerous for drivers and people walking at night. In big cities like Istanbul, electric companies such as BEDAŞ must check thousands of lines every day. Checking each line by hand is slow and expensive.
+
+In this project, we use hourly energy consumption data (kWh) from one street lighting line in Avcılar, Istanbul. The data covers about 14 months, from January 2025 to February 2026. Our main goal is to find days where the line does not work in a normal way. These unusual days are called \textit{anomalies}. If we can find them early, the maintenance team can fix problems faster.
+
+The problem is not easy because the data only shows total energy use. It does not say why a lamp is off. Also, many real outages happen during the daytime, when the lamps are already turned off automatically. So, we need a smart method that can still find useful patterns from limited information.
+
+\section{Methodology}
+
+We built a pipeline with three tiers (levels). Each tier uses a different idea to find anomalies, and at the end we combine their scores into one number. The reason for using three tiers is that no single method is perfect. Statistical methods are simple and fast but miss complex patterns. Machine learning methods are strong but can be unstable. Change point methods find big shifts but miss small ones. Together, they cover each other's weaknesses.
+
+\subsection{Data Preparation}
+We first cleaned the raw CSV file from the BEDAŞ OSOS system. The raw file had three problems:
+\begin{itemize}
+    \item Some rows were daily totals (around 99 kWh per row) instead of hourly values. We found them by checking duplicate timestamps and dropped them.
+    \item Some rows had invalid dates, like February 29 in a non-leap year, or April 31. We removed these 10 rows.
+    \item After February 25, 2026, the data stream stops. We excluded this empty period from our analysis because missing data is not the same as a real outage.
+\end{itemize}
+After cleaning, we had 424 daily observations. We also aggregated the hourly kWh into daily sums, because daily-level analysis is more stable and matches the ground truth format.
+
+\subsection{Tier 1 -- Statistical Methods}
+The first tier uses classical statistics. It has three sub-methods:
+\begin{itemize}
+    \item \textbf{T1a -- STL decomposition:} We split the daily signal into three parts: trend, seasonal (period = 365 days), and residual. The residual shows what is left after removing normal patterns. Days with a very large residual (high z-score) are flagged.
+    \item \textbf{T1b -- Modified Z-Score (global):} We use the median and MAD (Median Absolute Deviation) instead of mean and standard deviation, because they are more robust against outliers.
+    \item \textbf{T1c -- Rolling-baseline MZS:} For each day, we look at the 30 days before it and compute a local modified z-score. If the value is more than 1.5 away from the local baseline, it is flagged. This method handles slow changes better than T1a.
+\end{itemize}
+
+\subsection{Tier 2 -- Machine Learning}
+The second tier uses Isolation Forest, an unsupervised machine learning model. It builds many random trees and checks how easy it is to isolate each data point. Points that are easy to isolate get high anomaly scores.
+
+We did not only train it once. We ran it five times with different random seeds (42, 7, 13, 99, 2025) and compared the outputs using the Jaccard similarity index. The average similarity was 0.922, which means the model is stable and not just lucky with one seed. We used features like daily kWh, rolling mean, rolling standard deviation, day of week, and month.
+
+\subsection{Tier 3 -- Change Point Detection}
+The third tier looks for sudden level changes in the signal. If the mean energy usage drops or rises quickly and stays at a new level, that point is called a change point. We used the PELT algorithm (Pruned Exact Linear Time) with an L2 cost function. This is good for detecting events such as partial line failures or gradual degradation periods.
+
+\subsection{Ensemble and Scoring}
+Each tier produces a score between 0 and 1 for every day. We normalize them and take a weighted average to get a final ensemble score. Days with a score higher than a threshold (we tested 0.10, 0.15, 0.20, 0.25, 0.35, 0.50) are marked as anomalies.
+
+\subsection{Evaluation}
+We evaluated the pipeline in four ways:
+\begin{itemize}
+    \item \textbf{Ground truth comparison:} We compared flagged days with the rpt-300 outage report (6 known outage days).
+    \item \textbf{Silhouette score:} Measures how well the anomaly cluster is separated from the normal cluster.
+    \item \textbf{Bootstrap stability:} The average Jaccard across 5 Isolation Forest runs.
+    \item \textbf{Physical plausibility:} We check if flagged days also have unusual raw kWh values (very low or very high).
+\end{itemize}
+
+\section{Discussion}
+
+Our pipeline found 23 high-confidence anomalies. Among them, a degradation period in December 2025 and two sudden drops in March 2025 stand out as clear real events. These days were not in the ground truth, but the raw consumption data supports them.
+
+The ground truth (rpt-300) has 6 outage days, and we detected 2 of them at threshold 0.10 (January 9 and May 12). At first this looks like a low recall, but there is an important reason: most ground truth outages happened during the daytime. Street lamps are already off during the day (they have a photocell or timer), so a daytime outage does not change the total energy consumption. The only outage that had a clear impact was May 12 (04:47--06:46, still dark), and our pipeline detected it successfully. This shows the method works when the outage actually changes the energy signal; the problem is a data visibility gap, not a method failure.
+
+We also checked the pipeline quality in other ways. The silhouette score was 0.509, which means the normal and anomaly groups are well separated. The bootstrap stability was 0.922, so the Isolation Forest is not random. About half (50.7\%) of the flagged days are also supported by raw physical checks.
+
+One limitation is the STL method. With only about 1.16 years of data and a yearly seasonal period, the seasonal component absorbs too much variation and leaves near-zero residuals in the later months. That is why we added the T1c rolling-baseline method as a support. Another limitation is the short data range after February 25, 2026 (no data available), which we excluded from analysis.
+
+In the future, 2--3 years of data would make STL much stronger. Adding weather data (temperature, daylight hours, holidays) could explain more of the normal variation. Finally, if we had hourly-level ground truth instead of only daily outage reports, we could measure detection much more fairly.
+
+\section*{Acknowledgements}
+Data provided by BEDAŞ. This work is part of a university project at Kadir Has University.
+
+\end{document}

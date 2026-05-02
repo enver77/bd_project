@@ -1,0 +1,610 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\title{Anomaly Detection and Predictive Maintenance for Urban Street Lighting: \\
+\large A Multi-Method Analysis of BEDAŞ Electricity Consumption Data}
+\author{Ali Gökay Bozok, Sena [Surname], Feza [Surname], Enver [Surname] \\
+Kadir Has University}
+\date{April 2026}
+
+\begin{document}
+
+\maketitle
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+Urban street lighting systems constitute a critical component of municipal infrastructure, operating continuously under highly structured temporal schedules. Under normal conditions, their electricity consumption follows a predictable daily pattern: stable load during nighttime hours when luminaires are active, near-zero consumption during daylight, and sharp transitions at the evening switch-on and morning switch-off periods. This regularity makes street lighting networks particularly well-suited to data-driven anomaly detection: deviations from the expected consumption profile are inherently meaningful and can serve as early indicators of equipment malfunction, relay failure, or communication irregularities in the remote management system.
+
+For large-scale operators such as BEDA\c{S}, which manages one of the largest urban lighting networks in Turkey, maintaining operational reliability across thousands of distributed field units is a significant challenge. Manual inspection of consumption records is neither scalable nor timely; by the time a fault is identified through routine maintenance, service interruptions may already have occurred. Automated anomaly detection offers a more systematic alternative: by continuously monitoring consumption data against learned baselines, deviations can be flagged at the moment they occur, enabling targeted intervention before failures escalate.
+
+This study analyzes 14 months of hourly electricity consumption data obtained from the BEDA\c{S} Automated Meter Reading System (OSOS), covering the period from January~2025 to February~2026. The primary objective is to identify consumption behaviors that deviate significantly from established temporal patterns and to characterize the distribution of these deviations across time.
+
+Rather than relying on a single detection technique, the study applies four complementary approaches to the same dataset, each addressing a different aspect of the anomaly detection problem. The first approach uses Isolation Forest on hourly observations to provide an exploratory, system-wide view of anomaly distribution across time and season. The second approach uses Gramian Angular Field (GAF) representations to detect structural deviations in daily consumption profiles through image-based pattern analysis. The third approach combines statistical decomposition, machine learning, and change-point detection into a three-tier ensemble pipeline that operates at the daily level and produces a single fused anomaly score. The fourth approach applies supervised Gradient Boosting with labeled failure records to predict faults within a 24-hour horizon. By comparing these four independent methods, the study provides a broader and more robust picture of the lighting network's operational health than any single approach could offer alone.
+
+% ============================================================
+\section{Methodology}
+% ============================================================
+
+The dataset used in this study consists of hourly active power withdrawal measurements recorded by the OSOS system for the BEDA\c{S} urban lighting network. Data were provided in monthly Excel files, each containing hourly consumption readings for every calendar day of the corresponding month. The observation window spans January~2025 to February~2026, yielding 14 months of measurements. Only records labeled as power withdrawal were retained for analysis, as these reflect the actual energy consumed by the lighting network rather than bidirectional metering artifacts.
+
+The four analytical approaches described below address different aspects of the anomaly detection problem and operate at different temporal resolutions. The Isolation Forest approach (Section~2.1) works at the hourly level to provide system-wide anomaly distribution. The GAF approach (Section~2.2) converts daily profiles into image representations for structural pattern analysis. The three-tier ensemble pipeline (Section~2.3) operates at the daily level and fuses statistical, machine learning, and change-point methods into a single score. The supervised approach (Section~2.4) uses labeled failure events to predict faults within a 24-hour window. Together, these methods offer complementary perspectives: the unsupervised methods discover unknown patterns, while the supervised method targets known failure modes.
+
+
+% ────────────────────────────────────────────────────────────
+% SENA — Isolation Forest
+% ────────────────────────────────────────────────────────────
+\subsection{Isolation Forest-Based Anomaly Detection}
+
+\subsubsection{Data Acquisition and Preprocessing}
+
+Monthly electricity consumption datasets provided in Excel format by BEDA\c{S}'s Automated Meter Reading System (OSOS) were loaded into a Python environment and consolidated into a single longitudinal dataset spanning 14~months, from January~2025 to February~2026. Since the raw files contained both feed and withdrawal measurements, only records labeled as \textit{\c{C}eki\c{s}} (active power withdrawal) were retained, ensuring the analysis reflects actual energy consumed by the lighting network rather than bidirectional meter readings.
+
+The dataset was subsequently restructured from a wide format---where each column represented a calendar day---into a long format in which each row corresponds to a single hourly observation. Proper timestamp variables were constructed by combining year, month, day, and hour fields extracted from the source files. Missing hourly records, arising primarily from metering communication gaps, were addressed through time-based linear interpolation, which estimates absent values proportionally between adjacent observations, preserving the continuity of the time series without introducing artificial discontinuities. Following preprocessing, the final dataset comprised \textbf{9,780 hourly observations}.
+
+\subsubsection{Algorithm Selection}
+
+Isolation Forest was selected as the anomaly detection algorithm for this study for three principal reasons. First, the absence of verified fault records in the OSOS dataset made supervised approaches inapplicable; Isolation Forest operates in a fully unsupervised manner, requiring no labeled examples of anomalous behavior. Second, the algorithm is computationally efficient on large time-series datasets, as it constructs an ensemble of random decision trees without requiring distance or density computations. Third, it imposes no assumption on the underlying data distribution, making it well-suited to the irregular consumption patterns characteristic of street lighting systems.
+
+The algorithm operates on the principle that anomalous observations are \textit{``few and different''}: in a forest of randomly constructed decision trees, anomalous data points reach leaf nodes in significantly fewer partitions than typical observations, yielding shorter average path lengths and correspondingly lower anomaly scores. The key hyperparameters used in this study are summarized in Table~\ref{tab:if_params}.
+
+\begin{table}[h]
+\centering
+\caption{Isolation Forest Hyperparameter Configuration}
+\label{tab:if_params}
+\begin{tabular}{lll}
+\hline
+\textbf{Parameter} & \textbf{Value} & \textbf{Justification} \\
+\hline
+\texttt{n\_estimators}  & 200  & Ensemble stability across large dataset \\
+\texttt{contamination}  & 0.03 & $\approx$3\% outlier rate estimated from \\
+                        &      & visual inspection of consumption profiles \\
+\texttt{random\_state}  & 42   & Reproducibility \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Feature Engineering}
+
+Raw consumption values alone are insufficient for meaningful anomaly detection in this context: a value of 7~kWh, for example, is entirely normal at 02:00 when lights are expected to be on, yet represents a significant deviation at 14:00 when the network should be drawing near-zero power. To enable the model to understand this temporal context, several additional features were derived from the timestamp index, as described in Table~\ref{tab:features}.
+
+\begin{table}[h]
+\centering
+\caption{Engineered Features Used in Model Training}
+\label{tab:features}
+\begin{tabular}{p{3.2cm}p{4.5cm}p{5.5cm}}
+\hline
+\textbf{Feature} & \textbf{Description} & \textbf{Rationale} \\
+\hline
+Consumption        & Hourly active power draw (kWh) & Primary anomaly signal \\
+\texttt{hour\_sin} & $\sin\!\left(\dfrac{2\pi \cdot h}{24}\right)$ &
+  Circular encoding: preserves temporal \\
+\texttt{hour\_cos} & $\cos\!\left(\dfrac{2\pi \cdot h}{24}\right)$ &
+  continuity between hours 23:00 and 00:00 \\
+Day of week        & Integer 0--6 (Mon--Sun) & Captures weekly schedule variation \\
+\texttt{lag24}     & Consumption 24 hours prior & Same-hour previous-day baseline; \\
+                   &                            & flags abrupt deviations from \\
+                   &                            & expected repetitive behavior \\
+\hline
+\end{tabular}
+\end{table}
+
+Sinusoidal encoding was applied to the hour variable because a linear representation treats hours~23 and~0 as maximally distant, whereas operationally they are contiguous. The \texttt{lag24} feature exploits the highly repetitive daily schedule of street lighting systems: since normal consumption at any given hour closely mirrors the same hour on the preceding day, a significant departure from \texttt{lag24} constitutes a direct anomaly signal. All features were standardized using \texttt{StandardScaler} prior to model fitting.
+
+\subsubsection{Two-Phase Detection Pipeline}
+
+The analysis was conducted in two sequential phases, each addressing a distinct objective. The motivation for this two-phase design is straightforward: applying Isolation Forest to the entire dataset at once offers a useful exploratory overview, but provides no evidence of how well the model generalizes to data it has never seen. In a real predictive maintenance context, the model must be capable of identifying future faults---not just patterns in historical data. The second phase was designed specifically to answer this question.
+
+\paragraph{Phase~1 --- Global Anomaly Detection.}
+In the first phase, Isolation Forest was applied across the full 14-month dataset. The objective was exploratory: to examine the overall distribution of anomalies, determine whether they clustered during specific periods, and establish a system-wide baseline. Each observation was classified as either normal or anomalous, and results were aggregated by month, day, hour, and meteorological season. This phase yielded \textbf{294 detected anomalies}, with the seasonal breakdown shown in Table~\ref{tab:seasonal}.
+
+\begin{table}[h]
+\centering
+\caption{Seasonal Distribution of Anomalies --- Phase~1 (Global)}
+\label{tab:seasonal}
+\begin{tabular}{lrrr}
+\hline
+\textbf{Season} & \textbf{Anomalies} & \textbf{Normal} & \textbf{Anomaly Rate} \\
+\hline
+Winter   (Dec, Jan, Feb) & 135 & 3{,}052 & 4.2\% \\
+Summer   (Jun, Jul, Aug) &  72 & 2{,}136 & 3.3\% \\
+Spring   (Mar, Apr, May) &  49 & 2{,}152 & 2.2\% \\
+Autumn   (Sep, Oct, Nov) &  38 & 2{,}146 & 1.7\% \\
+\hline
+\textbf{Total} & \textbf{294} & \textbf{9{,}486} & \textbf{3.0\%} \\
+\hline
+\end{tabular}
+\end{table}
+
+Winter accounted for 45.9\% of all flagged observations. This finding aligns with expectations: lower temperatures and extended lighting hours increase the load on network infrastructure, making faults more likely during this period.
+
+\paragraph{Phase~2 --- Train-Test Based Evaluation.}
+To measure how well the model performs on unseen data, the dataset was split chronologically. All observations prior to December~2025 formed the training set, while the remainder constituted the test set. The \texttt{StandardScaler} normalization was computed on the training set alone and applied to the test set without refitting, preventing any future information from influencing the training process. This setup simulates a realistic deployment scenario: the model learns from historical data and is then applied to a future period it has never encountered. The split statistics are summarized in Table~\ref{tab:split}.
+
+\begin{table}[h]
+\centering
+\caption{Train-Test Split Statistics --- Phase~2}
+\label{tab:split}
+\begin{tabular}{lrrl}
+\hline
+\textbf{Set} & \textbf{Observations} & \textbf{Anomalies Detected} & \textbf{Anomaly Rate} \\
+\hline
+Training (Jan~2025 -- Nov~2025) & 7{,}979 & --- & --- \\
+Test     (Dec~2025 -- Feb~2026) & 1{,}777 & 162 & 9.1\% \\
+\hline
+\end{tabular}
+\end{table}
+
+The test-period anomaly rate of 9.1\% substantially exceeds the 3\% contamination prior specified during training. This should not be interpreted as model miscalibration. Rather, it is a direct consequence of the seasonal pattern identified in Phase~1: the model learned normality from predominantly non-winter data, and correctly identified the December--February test period as one of heightened operational deviation.
+
+
+% ────────────────────────────────────────────────────────────
+% FEZA — GAF
+% ────────────────────────────────────────────────────────────
+\subsection{GAF-Based Pattern Analysis}
+
+\subsubsection{Rationale for Using GAF}
+
+In this study, the Gramian Angular Field (GAF) approach was used to analyze daily electricity consumption profiles at the \emph{pattern level}, rather than treating each hourly observation independently. This choice was motivated by the operational nature of street-lighting systems. Under normal conditions, the daily profile follows a highly regular structure: electricity consumption remains high during nighttime operating hours, stays close to zero during the daytime, and changes sharply during switch-on and switch-off periods. Therefore, abnormality is not determined only by how much energy is consumed in total, but also by whether the \emph{internal organization} of the 24-hour profile departs from the dominant operating pattern.
+
+For this reason, GAF was selected as a structural representation method. The main advantage of GAF in this context is that it converts a one-dimensional daily load curve into a two-dimensional image-like form while preserving temporal relationships between hours. This makes full-day structural distortions more visible than direct inspection of raw hourly values.
+
+\subsubsection{Daily Profile Construction}
+
+Each day was represented as a 24-hour vector covering the interval from 00:00 to 23:00. In other words, one row of analysis corresponded to one complete daily consumption profile. This fixed-length representation was necessary because the GAF transformation requires all observations to have the same temporal dimension.
+
+The use of a 24-hour daily vector was appropriate for two reasons. First, the operating logic of the lighting system is inherently daily, since the expected on/off behavior repeats every day. Second, representing the data at the daily level allows the model to evaluate whether the \emph{shape} of the day is normal, instead of focusing only on single-hour fluctuations.
+
+\subsubsection{Missing Data Classification}
+
+Before GAF image generation, daily profiles were evaluated in terms of data completeness. Since the transformation requires a complete 24-hour vector, missing hourly values had to be handled explicitly. For this reason, a three-level missing data classification was applied:
+
+\begin{itemize}
+    \item \textbf{Complete days:} days with all 24 hourly observations available.
+    \item \textbf{Partial-missing days:} days with limited missing hourly values, considered recoverable through imputation.
+    \item \textbf{Low-quality days:} days with excessive missingness, excluded from analysis because they would not provide a reliable structural representation.
+\end{itemize}
+
+This classification was introduced to separate \emph{usable but incomplete} daily profiles from profiles that were too sparse to support meaningful image construction. Days with more than 25\% missing hourly observations were excluded. This threshold was used because beyond that level, too much of the daily structure would be reconstructed rather than observed, which would weaken the interpretability of the generated GAF image.
+
+\subsubsection{Monthly Hourly Median Imputation}
+
+For days classified as partial-missing, missing hourly values were filled using the \textbf{monthly hourly median}. This means that a missing value at a given hour was replaced by the median value of the same hour within the corresponding month.
+
+This imputation strategy was preferred for several reasons. First, street-lighting consumption is strongly \emph{hour-specific}: nighttime hours typically form a stable high-consumption plateau, while daytime hours remain near zero. Second, the pattern is also \emph{season-sensitive}: sunrise and sunset timing shifts across months, which affects the transition hours. Because of this, using a global mean would blur the distinction between daytime and nighttime behavior.
+
+Zero imputation was also avoided, since it could create artificial discontinuities and produce false anomalies in the GAF image. Linear interpolation was not preferred either, because consecutive missing hours---especially around transition periods---could impose an artificial slope on a profile that is normally characterized by relatively stable nighttime behavior. By contrast, the monthly hourly median preserves the expected level of each clock hour within the relevant seasonal context while remaining robust to occasional outliers.
+
+\subsubsection{GAF Transformation Procedure}
+
+After preprocessing, each 24-dimensional daily vector was transformed into a $24 \times 24$ Gramian Angular Summation Field image. The transformation was carried out in three main steps:
+
+\begin{enumerate}
+    \item each daily profile was normalized to the interval $[-1,1]$,
+    \item the normalized values were mapped into angular space using the $\arccos$ function,
+    \item pairwise angular relationships between all hourly values were computed to form the GAF matrix.
+\end{enumerate}
+
+The resulting matrix reflects how each hour is positioned relative to all other hours in the same daily profile. Normal operating days tend to produce stable and visually coherent image patterns, whereas abnormal days generate more fragmented or distorted structures.
+
+\subsubsection{Autoencoder-Based Structural Reconstruction}
+
+To quantify structural deviations in the generated GAF images, an unsupervised autoencoder was applied. The model architecture used in this study was:
+
+\[
+576 \rightarrow 64 \rightarrow 16 \rightarrow 64 \rightarrow 576
+\]
+
+Each $24 \times 24$ GAF image was flattened into a one-dimensional vector of length 576. The encoder compressed this into a 16-dimensional bottleneck, forcing the network to retain only the most essential structural characteristics. The decoder then reconstructed the full vector. The raw anomaly score was defined as the mean squared reconstruction error between the original and reconstructed GAF vectors.
+
+\subsubsection{Mask-Aware Scoring}
+
+Because some retained days still contained imputed hourly values, the raw reconstruction error was further adjusted using a \textbf{mask-aware scoring} scheme. The final anomaly score was calculated by weighting the raw reconstruction error according to the proportion of genuinely observed hourly data in that day. This ensured that partially imputed days could still be included in the analysis while reducing the risk that missing-data artifacts would dominate the anomaly ranking. Days classified as low quality were excluded entirely from the scoring stage.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.2\linewidth]{fig2_gaf_grid.png}
+    \caption{Representative GAF images of one normal day and the top anomalous days.}
+    \label{fig:gaf_grid}
+\end{figure}
+
+
+% ────────────────────────────────────────────────────────────
+% ALI GÖKAY — Three-Tier Ensemble Pipeline
+% ────────────────────────────────────────────────────────────
+\subsection{Three-Tier Ensemble Anomaly Detection Pipeline}
+
+While the Isolation Forest approach (Section~2.1) operates on hourly observations and the GAF approach (Section~2.2) analyzes daily structural patterns, the three-tier ensemble pipeline takes a different strategy: it applies three fundamentally different detection methods to the same daily-aggregated time series, then fuses their outputs into a single anomaly score. The idea is that no single method is perfect on its own---statistical methods are simple but miss complex patterns, machine learning methods are powerful but can be unstable, and change-point methods find level shifts but miss isolated spikes. By combining them, the pipeline aims to cover each method's weaknesses.
+
+\subsubsection{Data Preparation}
+
+The raw OSOS data was cleaned for three issues. First, some rows were daily totals (approximately 99~kWh) rather than hourly readings; these were identified by duplicate timestamps and removed via \texttt{drop\_duplicates(subset=["timestamp"])}. Second, 10 rows with invalid dates (e.g., February~29 in a non-leap year, April~31) were dropped. Third, the data stream stops after February~25, 2026; this empty period was excluded from analysis because missing data should not be confused with a real operational anomaly. After cleaning, hourly values were summed into daily totals, yielding \textbf{424 daily observations}.
+
+Figure~\ref{fig:ensemble_timeseries} shows the resulting daily consumption time series after preprocessing, providing an overview of the data that enters the three-tier pipeline.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{visualizations/00_timeseries_overview.png}
+\caption{Daily electricity consumption (kWh) for the BEDA\c{S} street lighting line over the 14-month observation window. Red markers indicate days flagged by the ensemble pipeline. Orange markers indicate ground truth outage days from the rpt-300 report.}
+\label{fig:ensemble_timeseries}
+\end{figure}
+
+\subsubsection{Tier~1 --- Statistical Methods}
+
+The first tier uses classical statistical techniques to identify days whose consumption departs significantly from expected levels. Three complementary sub-methods were applied:
+
+\begin{itemize}
+    \item \textbf{T1a --- STL Decomposition + Modified Z-Score.} The daily consumption signal was decomposed into trend, seasonal (period = 365 days), and residual components using Seasonal-Trend decomposition using Loess (STL; Cleveland et al., 1990) in robust mode. The residual captures the portion of the signal that cannot be explained by repeating seasonal behavior or long-term trend. A Modified Z-Score (MZS; Iglewicz \& Hoaglin, 1993) was then computed on the residual:
+    \[
+    M_i = \frac{0.6745 \cdot (x_i - \tilde{x})}{\text{MAD}}
+    \]
+    where $\tilde{x}$ is the median and MAD is the Median Absolute Deviation. Days with $M_i < -3.5$ (anomalously low consumption) were flagged. MZS was preferred over the standard z-score because it uses the median and MAD rather than the mean and standard deviation, making it robust to outliers.
+
+    \item \textbf{T1b --- CUSUM Control Chart.} A lower-side Cumulative Sum (CUSUM; Page, 1954) chart was applied to the STL residuals to detect sustained downward shifts. While T1a flags individual extreme days, CUSUM accumulates small negative deviations over consecutive days. An alarm is raised when the cumulative sum exceeds a threshold $h = 5\sigma$, where $\sigma$ is the residual standard deviation. This makes CUSUM effective for detecting gradual degradation events that are too slow for z-score methods to catch.
+
+    \item \textbf{T1c --- Rolling-Baseline MZS.} Because the dataset spans only approximately 1.16 annual cycles, the STL seasonal component absorbs nearly all variation for months 3--14, leaving near-zero residuals. To compensate for this known limitation, a rolling-baseline method was added. For each day, the deviation from a 28-day rolling median was computed, and the Modified Z-Score of this deviation was calculated. Days with $M_i < -1.5$ were flagged. This method does not depend on having multiple seasonal cycles and adapts to local trends.
+\end{itemize}
+
+The Tier~1 severity score $S_1$ was defined as the maximum severity across all three sub-methods:
+\[
+S_1 = \max(S_{1a}, \; S_{1b}, \; S_{1c})
+\]
+
+Figure~\ref{fig:stl_decomposition} illustrates the STL decomposition output, showing how the daily signal is separated into trend, seasonal, and residual components. The residual panel highlights where consumption departs from the expected pattern.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{visualizations/01_stl_decomposition.png}
+\caption{STL decomposition of daily electricity consumption into trend, seasonal, and residual components. Anomalous days (red markers) and ground truth outage days (orange markers) are overlaid on the raw series panel.}
+\label{fig:stl_decomposition}
+\end{figure}
+
+Figure~\ref{fig:cusum_chart} shows the lower-side CUSUM control chart applied to the STL residuals. The cumulative sum rises when consumption is persistently below the expected level, and an alarm is triggered when it crosses the threshold line.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{visualizations/02_cusum_chart.png}
+\caption{Lower-side CUSUM chart on STL residuals. The alarm threshold ($h = 5\sigma$) is shown as a dashed line. Periods where the CUSUM statistic exceeds this threshold indicate sustained below-normal consumption.}
+\label{fig:cusum_chart}
+\end{figure}
+
+\subsubsection{Tier~2 --- Machine Learning}
+
+The second tier uses an unsupervised machine learning approach to identify days that are statistically unusual in a higher-dimensional feature space.
+
+\begin{itemize}
+    \item \textbf{T2a --- Isolation Forest.} Unlike the hourly-level Isolation Forest in Section~2.1, this instance operates on daily aggregates with features including daily kWh, rolling mean, rolling standard deviation, day of week, and month. To verify model stability, the algorithm was run five times with different random seeds (42, 7, 13, 99, 2025). The outputs were compared using the Jaccard similarity index, which measures the overlap between two sets of flagged days. The average pairwise Jaccard similarity was \textbf{0.922}, indicating that the model produces consistent results regardless of random initialization.
+
+    \item \textbf{T2b --- LSTM Autoencoder (not executed).} An LSTM Autoencoder was implemented following Malhotra et al.\ (2016) to capture sequential patterns that Isolation Forest cannot detect. The architecture uses a 7-day lookback window to learn the temporal structure of normal consumption sequences. However, this component was not executed in the current analysis due to limited data length (424~days is below the recommended minimum for training deep sequence models) and the heavy TensorFlow dependency. The code is retained for future use when 2--3 years of data become available.
+\end{itemize}
+
+Figure~\ref{fig:iforest_pca} shows a PCA projection of the daily feature space, with normal and anomalous days colored differently. The visual separation between the two clusters corresponds to the silhouette score of 0.509 reported in the evaluation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{visualizations/03_iforest_pca_scatter.png}
+\caption{PCA scatter plot of daily observations in the Isolation Forest feature space. Blue points represent normal days; red points represent days flagged as anomalous. The two groups show visible separation.}
+\label{fig:iforest_pca}
+\end{figure}
+
+\subsubsection{Tier~3 --- Change-Point Detection}
+
+The third tier searches for abrupt level changes in the daily consumption signal using the PELT algorithm (Pruned Exact Linear Time; Killick et al., 2012), implemented via the \texttt{ruptures} library (Truong et al., 2020). PELT uses a radial basis function (RBF) cost model with a penalty parameter of 10.0 and a minimum segment size of 3~days. When a change point is detected, a severity score is assigned based on the magnitude of the mean shift between the 14-day windows before and after the change point. This tier is particularly effective for detecting events such as partial line failures or prolonged degradation periods, where the consumption level shifts to a new baseline and remains there.
+
+Figure~\ref{fig:changepoint_timeline} shows the detected change points overlaid on the daily consumption signal. Each vertical line marks a point where the PELT algorithm identified a significant shift in the mean consumption level.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{visualizations/04_changepoint_timeline.png}
+\caption{Change-point detection results using the PELT algorithm. Vertical lines indicate detected change points where the mean consumption level shifts significantly. The shaded bands show the 14-day comparison windows before and after each change point.}
+\label{fig:changepoint_timeline}
+\end{figure}
+
+\subsubsection{Ensemble Scoring}
+
+Each tier produces a severity score between 0 and 1 for every day. These scores were combined into a final ensemble score using a weighted average:
+\[
+S_{\text{final}} = 0.35 \cdot S_1 + 0.35 \cdot S_2 + 0.30 \cdot S_3
+\]
+where $S_1$, $S_2$, and $S_3$ are the severity scores from Tiers~1, 2, and~3 respectively. Equal weight was given to Tiers~1 and~2, with slightly less to Tier~3 because change-point detection is more conservative and flags fewer days. A vote count was also recorded (how many of the three tiers independently flagged each day), providing an additional confidence indicator.
+
+Each flagged day was also classified by anomaly type based on its deviation from the 28-day rolling median baseline: ``outage'' (more than 30\% below baseline), ``sudden drop'' (10--30\% below), ``gradual decline'' (5--10\% below), or ``increase'' (more than 10\% above).
+
+\subsubsection{Evaluation Framework}
+
+The pipeline was evaluated along four dimensions, reflecting the fact that no single metric is sufficient for anomaly detection:
+
+\begin{itemize}
+    \item \textbf{Ground truth comparison.} Flagged days were compared to the rpt-300 maintenance report, which contains 6 known outage days. Precision, recall, and F1-score were computed at multiple thresholds (0.10, 0.15, 0.20, 0.25, 0.35, 0.50).
+    \item \textbf{Silhouette score.} This measures how well-separated the normal and anomaly clusters are in feature space. A score above 0.5 indicates good separation.
+    \item \textbf{Bootstrap stability.} The average Jaccard similarity across five Isolation Forest runs with different random seeds, measuring whether the model's outputs are reproducible.
+    \item \textbf{Physical plausibility.} The proportion of flagged days that also have unusually low or high raw kWh values, confirming that the flags correspond to real consumption events rather than statistical noise.
+\end{itemize}
+
+
+% ────────────────────────────────────────────────────────────
+% ENVER — Supervised + Electrical Features
+% ────────────────────────────────────────────────────────────
+\subsection{Data and Feature Engineering for Supervised and Anomaly Detection Models}
+
+The supervised and anomaly detection models described in this section were developed using a merged dataset that combines energy consumption records with three-phase electrical measurements from the same meter. The energy dataset contains 9,780 hourly records and the electrical dataset contains 9,456 hourly records, covering the same 14-month period. The two sources were merged on their shared timestamp, and all subsequent analyses were conducted on the resulting unified dataset.
+
+We defined the prediction target as a binary label indicating whether a failure will start within the next 24 hours ($y^{24h}_t$), yielding 547 positive samples (5.59\% of all hours). This horizon was chosen because it provides a practical window for dispatching maintenance crews while retaining enough positive samples for supervised learning.
+
+Feature engineering produced two feature sets. The \textbf{energy feature set} (16 features) includes rolling mean and standard deviation over 3, 6, 12, and 24-hour windows, hourly and daily differencing, and temporal indicators (hour of day, day of week, month, weekend/night flags). The \textbf{merged feature set} (53+ features) extends this with phase current imbalance ($\sigma_I = \text{std}(I_R, I_S, I_T)$), voltage imbalance, average current/voltage/power factor across phases, apparent and active power, energy-to-current ratio, and rolling standard deviations of electrical parameters over 6, 12, and 24-hour windows. All features were standardized using z-score normalization.
+
+\subsection{Supervised Failure Prediction (Gradient Boosting)}
+
+Supervised failure prediction was selected because the availability of 28 labeled failure events---however limited---allows the model to learn discriminative patterns that distinguish pre-failure hours from normal operation. Unsupervised methods can flag unusual patterns, but they cannot distinguish between ``unusual but harmless'' and ``unusual because a failure is coming.'' Supervised learning addresses this by directly optimizing for failure prediction accuracy.
+
+\subsubsection{Gradient Boosting Decision Trees}
+
+We selected Gradient Boosting Decision Trees (GBDT) as the classifier for three reasons. First, GBDT models consistently achieve state-of-the-art performance on tabular datasets, particularly when the number of samples is small to moderate---a critical consideration given our $\sim$9,500 training rows. Second, GBDT provides feature importance scores that allow us to verify whether the model relies on physically meaningful signals (e.g., current imbalance) rather than spurious correlations. Third, the model's sequential tree construction naturally handles feature interactions (e.g., the combination of low voltage \textit{and} high current imbalance) without requiring explicit interaction terms.
+
+The model was trained with 300 estimators, a maximum depth of 5, a learning rate of 0.05, row subsampling of 80\%, and a minimum of 10 samples per leaf. All evaluation used a time-based 80/20 train/test split (no shuffling) to prevent temporal data leakage.
+
+\subsubsection{Merged Features (Electrical and Energy Datasets)}
+
+Before addressing class imbalance, we first tested whether electrical measurements add predictive value beyond energy consumption. We trained identical GradientBoosting models on the energy-only feature set (Model~A, 16 features) and the merged feature set (Model~B, 53 features) using five-fold time-series cross-validation.
+
+Model~B outperformed Model~A on every metric: F1 improved from 0.0435 to 0.0555 and ROC-AUC from 0.4285 to 0.5063. While both scores are modest in absolute terms, the improvement is consistent across all folds and the direction is unambiguous---ROC-AUC moves from below random chance (0.43) to above the random baseline (0.51). This confirmed that electrical measurements carry independent predictive signal, and all subsequent experiments used the merged feature set.
+
+\subsubsection{Threshold Optimization Over Oversampling}
+
+The extreme class imbalance (5.59\% positive rate) means that a default classification threshold of 0.50 produces near-zero recall: the model almost never predicts a failure because the prior probability is so low. The standard remedy in the literature is synthetic oversampling---generating artificial positive samples to balance the training distribution. We evaluated three oversampling methods: SMOTE, which interpolates between existing positive samples; SMOTE combined with Tomek link removal, which additionally removes ambiguous borderline samples; and ADASYN, which focuses synthetic generation on harder-to-learn regions.
+
+However, we also tested a simpler alternative: keeping the original training distribution but sweeping the classification threshold from 0.03 to 0.60 to find the value that maximizes F1-score. The rationale is that oversampling modifies the data the model learns from---potentially introducing artifacts in time-series data where temporal continuity matters---while threshold tuning modifies only the decision boundary after learning.
+
+
+% ============================================================
+\section{Discussion}
+% ============================================================
+
+This section presents and interprets the findings from all four analytical approaches. While each method was developed independently, the results are discussed together to highlight where they agree, where they differ, and what each contributes to the overall understanding of the lighting network's operational behavior.
+
+
+% ────────────────────────────────────────────────────────────
+% SENA — Discussion
+% ────────────────────────────────────────────────────────────
+\subsection{Isolation Forest Findings and Interpretation}
+
+The two-phase Isolation Forest analysis applied to 14~months of hourly electricity consumption data yields three principal findings: anomaly occurrence is strongly seasonal, with winter months accounting for nearly half of all detected deviations; anomalies cluster at the two daily lighting transition windows rather than during stable operating periods; and a model trained on predominantly non-winter data produces an elevated anomaly rate when applied to a winter test period---a result that reflects a genuine seasonal shift in system behavior rather than a modeling artifact.
+
+\subsubsection{Seasonal Anomaly Distribution}
+
+Figure~\ref{fig:monthly_bar} shows the monthly anomaly counts across the full observation window. January~2025 and January~2026 recorded the highest counts (38 and 39, respectively), while March~2025 produced the lowest (5). The near-identical anomaly volumes in the same calendar month one year apart---drawn from entirely independent data files---provide strong evidence that the detected pattern reflects a genuine recurring seasonal phenomenon in the physical infrastructure rather than a coincidence of the model's decision boundary.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../../figures/monthly_bar.png}
+\caption{Number of detected anomalies per month across the 14-month observation window (Phase~1, global detection).}
+\label{fig:monthly_bar}
+\end{figure}
+
+Winter months collectively accounted for 45.9\% of all 294 flagged observations. Extended operating hours during winter increase the cumulative thermal stress on relay contacts and driver circuits, raising the probability of measurable consumption deviations. The sharp drop from February (22) to March (5) aligns with the expected seasonal load reduction and further supports the validity of the anomaly signal.
+
+\subsubsection{Hourly Anomaly Clusters and Operational Interpretation}
+
+The 24-hour anomaly heatmap (Figure~\ref{fig:hourly_heatmap}) reveals a structurally consistent bimodal pattern across all 14~months: anomalies concentrate at \textbf{07:00} and \textbf{17:00--18:00}, corresponding to the morning switch-off and evening switch-on transitions of the lighting network.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../../figures/hourly_heatmap.png}
+\caption{24-hour anomaly distribution across 14~months (Phase~1). Anomalies concentrate at hours 07:00 and 17:00--18:00, corresponding to daily lighting transition events.}
+\label{fig:hourly_heatmap}
+\end{figure}
+
+These windows are operationally significant: relay activation and deactivation cycles are the moments most susceptible to timing faults and switching irregularities. The virtual absence of anomalies during midday hours (10:00--16:00) confirms that the network draws near-zero power during daylight and that the model correctly identifies this window as structurally normal. This finding has a direct maintenance implication: automated alerts triggered specifically during the 06:00--08:00 and 16:00--19:00 windows would improve fault detection efficiency while reducing unnecessary review of stable operating periods.
+
+\subsubsection{Anomaly Calendar and the December~31 Cluster}
+
+The day-month heatmap (Figure~\ref{fig:day_heatmap}) shows that most days record zero or one anomaly, indicating broad conformity with expected consumption behavior. However, December~31, 2025 stands out with 13 anomalies---the highest single-day count in the dataset---followed by January~1, 2026 with 7.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../../figures/day_heatmap.png}
+\caption{System-wide anomaly calendar: daily anomaly counts by month (Phase~1). The Dec~31 / Jan~1 cluster is the most pronounced localized concentration in the dataset.}
+\label{fig:day_heatmap}
+\end{figure}
+
+This two-day cluster coincides with the New Year period, during which municipalities commonly extend lighting schedules for public events. The model correctly flags these readings as statistically anomalous relative to the learned baseline, yet they may reflect deliberate schedule changes rather than equipment faults. This illustrates a fundamental characteristic of unsupervised detection: the model cannot distinguish between a consumption deviation caused by a relay fault and one caused by an intentional but undocumented operating change.
+
+\subsubsection{Phase~2 Generalization to Unseen Data}
+
+Figure~\ref{fig:test_timeseries} shows anomaly predictions on the December~2025 -- February~2026 test period. Flagged observations cluster at points where the consumption signal departs from the characteristic sawtooth pattern.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../../figures/test_timeseries.png}
+\caption{Isolation Forest anomaly detection on the test set (Dec~2025 -- Feb~2026). Red markers indicate flagged observations.}
+\label{fig:test_timeseries}
+\end{figure}
+
+Figure~\ref{fig:test_hourly} confirms that the bimodal transition signature identified in Phase~1 is preserved in the test period: hours~07:00 and 17:00 again emerge as dominant anomaly windows with 28 and 29 flagged observations respectively, indicating that the model has successfully generalized the learned switching-transition pattern to unseen data.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{../../figures/test_hourly.png}
+\caption{Hourly distribution of anomalies in the test set (Phase~2). The bimodal pattern at 07:00 and 17:00 mirrors the Phase~1 result.}
+\label{fig:test_hourly}
+\end{figure}
+
+\subsubsection{The Contamination Discrepancy}
+
+The test-period anomaly rate of 9.1\% substantially exceeds the 3\% contamination prior. The \texttt{contamination} parameter positions the decision threshold such that 3\% of \textit{training} observations are classified as anomalous. This threshold is then held fixed and applied to the test set. The training set contains only two winter months against nine non-winter months, so the learned normality baseline is weighted toward warmer seasons. December accounts for 100 of the 162 test anomalies (61.7\%), confirming that the elevated rate is driven by a seasonal distribution shift rather than model miscalibration.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth]{../../figures/test_monthly.png}
+\caption{Monthly distribution of anomalies in the test set (Phase~2). December dominates, reflecting the seasonal mismatch between the training distribution and the winter test period.}
+\label{fig:test_monthly}
+\end{figure}
+
+
+% ────────────────────────────────────────────────────────────
+% FEZA — Discussion
+% ────────────────────────────────────────────────────────────
+\subsection{GAF Findings}
+
+The GAF-based findings indicate that the primary value of this approach lies in revealing sustained structural deviations in daily consumption behavior rather than simply identifying isolated anomalous observations. The most meaningful result is the persistent nighttime amplitude reduction beginning in mid-December 2025, which represents a multi-week departure from the previously stable operating pattern. Unlike single-day irregularities, this type of prolonged structural change is more suggestive of a broader system-level shift in lighting behavior, potentially associated with partial circuit deactivation, luminaire degradation, or changes in control settings. However, because maintenance records and field validation data were not available, these interpretations cannot be treated as confirmed fault diagnoses. Instead, GAF-based results should be regarded as anomaly indicators that highlight operationally significant deviations and support further technical investigation.
+
+
+% ────────────────────────────────────────────────────────────
+% ALI GÖKAY — Discussion
+% ────────────────────────────────────────────────────────────
+\subsection{Three-Tier Ensemble Findings}
+
+The three-tier ensemble pipeline, operating on 424 daily observations, identified \textbf{23 high-confidence anomalies} (ensemble score $\geq$ 0.50). These anomalies were not uniformly distributed across the observation window; they concentrated in two distinct periods that align with operationally meaningful events. Figure~\ref{fig:calendar_heatmap} provides a calendar view of the ensemble anomaly scores, allowing visual identification of when anomalous days cluster.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{visualizations/05_calendar_heatmap.png}
+\caption{Calendar heatmap of daily ensemble anomaly scores. Darker colors indicate higher anomaly scores. The clustering of high scores in specific periods (March~2025, December~2025) is clearly visible.}
+\label{fig:calendar_heatmap}
+\end{figure}
+
+\subsubsection{Detected Anomaly Events}
+
+A degradation period in \textbf{December~2025} was detected by both Tier~1 (rolling-baseline MZS) and Tier~3 (PELT change-point), indicating a sustained reduction in nighttime consumption that persisted over multiple weeks. This finding is consistent with the GAF analysis (Section~3.2), which independently identified a persistent nighttime amplitude reduction starting in mid-December---providing cross-method confirmation that this period represents a genuine operational change rather than a statistical artifact.
+
+Two \textbf{sudden drops in March~2025} were flagged primarily by Tier~1 (STL residual) and Tier~2 (Isolation Forest). These appear as isolated one- or two-day events where daily consumption fell well below the rolling baseline. Although these events were not present in the ground truth maintenance report, the raw kWh values on these days are clearly below normal levels, supporting their physical plausibility.
+
+\subsubsection{Ground Truth Comparison}
+
+The rpt-300 maintenance report contains 6 known outage days. Table~\ref{tab:ensemble_threshold} shows the detection performance across multiple ensemble score thresholds. At the best-performing threshold of 0.10, the pipeline detected 2 of these 6 days (January~9 and May~12, 2025), yielding a recall of 0.333, a precision of 0.013, and an F1-score of 0.025.
+
+\begin{table}[H]
+\centering
+\caption{Three-tier ensemble detection performance at different score thresholds, evaluated against the rpt-300 ground truth (6 outage days).}
+\label{tab:ensemble_threshold}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Threshold} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} \\
+\midrule
+0.10 & 2 & 151 & 4 & 0.013 & 0.333 \\
+0.15 & 1 & 111 & 5 & 0.009 & 0.167 \\
+0.20 & 1 &  99 & 5 & 0.010 & 0.167 \\
+0.25 & 1 &  91 & 5 & 0.011 & 0.167 \\
+0.35 & 0 &  67 & 6 & 0.000 & 0.000 \\
+0.50 & 0 &  22 & 6 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These numbers are low in absolute terms, but the explanation lies in the nature of the ground truth events rather than a failure of the method. Five of the six outage days correspond to daytime events---periods when the street lamps are already switched off by photocell or timer. A daytime outage, by definition, does not change the energy consumption because the system is not drawing power during those hours. The only nighttime outage in the ground truth (May~12, 04:47--06:46) was successfully detected. This demonstrates that the pipeline works correctly when the fault produces a measurable signal in the consumption data; the low recall reflects a \emph{data visibility gap}, not a method failure.
+
+\subsubsection{Unsupervised Quality Metrics}
+
+Table~\ref{tab:ensemble_quality} summarizes the unsupervised evaluation metrics for the three-tier ensemble pipeline.
+
+\begin{table}[H]
+\centering
+\caption{Unsupervised quality metrics for the three-tier ensemble pipeline.}
+\label{tab:ensemble_quality}
+\begin{tabular}{lrl}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Interpretation} \\
+\midrule
+Silhouette score          & 0.509  & Good cluster separation \\
+Bootstrap stability (avg Jaccard) & 0.922  & High model reproducibility \\
+Physical plausibility rate & 50.7\% & Half of flags supported by raw kWh \\
+Tier~1 vs Tier~3 agreement (Jaccard) & 0.036 & Low overlap (by design) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The silhouette score of \textbf{0.509} indicates good separation between normal and anomalous day clusters in the feature space. The bootstrap stability (average Jaccard = \textbf{0.922}) confirms that the Isolation Forest component produces consistent results across different random initializations. The physical plausibility rate of \textbf{50.7\%}---meaning that roughly half of all flagged days also have unusually low or high raw kWh values---provides additional confidence that the flags correspond to real consumption events.
+
+The inter-method agreement between Tier~1 and Tier~3 (Jaccard = 0.036) is intentionally low. These methods are designed to detect different types of anomalies: Tier~1 flags individual unusual days, while Tier~3 flags level shifts. Low overlap is expected and is the reason for using an ensemble---each tier contributes information that the others miss.
+
+
+% ────────────────────────────────────────────────────────────
+% ENVER — Discussion
+% ────────────────────────────────────────────────────────────
+\subsection{Supervised Prediction Results}
+
+Table~\ref{tab:supervised} presents the results of the oversampling comparison. The baseline model without oversampling, when combined with threshold optimization (threshold = 0.09), achieved the highest F1-score of 0.101 with 65.9\% recall---meaning it correctly identified 27 out of 41 failure-adjacent hours.
+
+\begin{table}[H]
+\centering
+\caption{Supervised model performance across oversampling strategies. All models use GradientBoosting with merged features. Thresholds are optimized per strategy.}
+\label{tab:supervised}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Strategy} & \textbf{Threshold} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} \\
+\midrule
+No oversampling & 0.09 & 5.5\% & \textbf{65.9\%} & \textbf{0.101} & 0.664 \\
+SMOTE & 0.05 & 3.9\% & 43.9\% & 0.072 & 0.689 \\
+SMOTE+Tomek & 0.05 & 4.7\% & 56.1\% & 0.087 & \textbf{0.725} \\
+ADASYN & 0.05 & 5.0\% & 61.0\% & 0.092 & 0.699 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../figures/fig5_oversampling_comparison.pdf}
+\caption{Left: F1 score vs ROC-AUC by strategy. Right: precision--recall trade-off.}
+\label{fig:oversampling}
+\end{figure}
+
+SMOTE+Tomek achieved the best ROC-AUC (0.725), indicating that its probability outputs rank hours by failure risk more reliably. However, its F1 score (0.087) was lower than the threshold-tuned baseline. This arises because ROC-AUC measures the quality of the full probability ranking, while F1 measures binary classification at a single threshold. If the deployment goal is binary alerting, threshold-tuned baseline is preferable; if the goal is risk ranking, SMOTE+Tomek is preferable.
+
+Feature importance analysis (Figure~\ref{fig:features}) confirmed that the model relies on physically interpretable signals. The top energy features were 24-hour rolling standard deviation and mean, which capture whether consumption stability is degrading. Among electrical features, current imbalance ranked fifth overall, consistent with domain knowledge that asymmetric phase loading is a precursor to equipment faults.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/fig6_feature_importance.pdf}
+\caption{Top 15 feature importances from the best GradientBoosting model. Blue: energy features; purple: electrical features.}
+\label{fig:features}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/fig12_energy_vs_merged.pdf}
+\caption{Model performance with energy-only features (Model~A) vs.\ merged energy + electrical features (Model~B). The merged model outperforms on all four metrics.}
+\label{fig:fusion}
+\end{figure}
+
+
+% ────────────────────────────────────────────────────────────
+% CROSS-METHOD SYNTHESIS
+% ────────────────────────────────────────────────────────────
+\subsection{Cross-Method Synthesis}
+
+The four methods applied in this study operate at different temporal resolutions and use different algorithmic principles, yet several of their findings converge:
+
+\begin{itemize}
+    \item \textbf{December 2025 degradation.} The Isolation Forest (Section~3.1) detected elevated anomaly rates in December, the GAF analysis (Section~3.2) identified a persistent nighttime amplitude reduction starting in mid-December, and the three-tier ensemble (Section~3.3) flagged a degradation period via both rolling-baseline and change-point methods. Three independent approaches agree that something changed in the lighting network during this period.
+
+    \item \textbf{Winter seasonality.} Both the hourly Isolation Forest (45.9\% of anomalies in winter) and the daily ensemble (concentration of high-scoring days in winter months) confirm that the network experiences more anomalous behavior during cold months with extended operating hours.
+
+    \item \textbf{Transition-hour sensitivity.} The hourly Isolation Forest found anomalies clustering at 07:00 and 17:00--18:00. The GAF analysis, which evaluates the full 24-hour shape, also identified structural distortions around these transition periods. This confirms that switching events are the most operationally vulnerable moments.
+
+    \item \textbf{Limitation of daily ground truth.} Both the three-tier ensemble (2/6 outages detected) and the supervised model (low precision despite reasonable recall) demonstrate that daily-level analysis cannot detect daytime outages in a nighttime-only consumption system. This is a data constraint, not a modeling failure.
+\end{itemize}
+
+These convergences strengthen the overall findings because they were obtained independently, using different code, different features, and different algorithmic assumptions.
+
+
+% ────────────────────────────────────────────────────────────
+% LIMITATIONS AND FUTURE WORK
+% ────────────────────────────────────────────────────────────
+\subsection{Limitations and Future Work}
+
+Several limitations should be acknowledged. The absence of comprehensive verified fault records means that precision and recall metrics are limited to the 6 days available in the rpt-300 report. The contamination parameter in Isolation Forest was set by visual inspection rather than historical fault frequency. The STL decomposition in the three-tier pipeline is constrained by the short data span (1.16 annual cycles), which causes the seasonal component to absorb excessive variation. The data stream stops after February~25, 2026, leaving the most recent period unanalyzed.
+
+Future work could address these gaps in several ways. Extending the observation window to 2--3 years would improve STL decomposition and allow proper validation of seasonal patterns. Incorporating external covariates such as sunrise/sunset times, ambient temperature, and holiday calendars would help explain expected variation and reduce false positives. Enabling the LSTM Autoencoder component with a longer dataset would add sequential pattern detection to the ensemble. Finally, obtaining hourly-level maintenance records instead of daily outage reports would enable much fairer evaluation of detection performance.
+
+
+\section*{Acknowledgements}
+Data provided by BEDA\c{S}. This work is part of a university project at Kadir Has University.
+
+\end{document}

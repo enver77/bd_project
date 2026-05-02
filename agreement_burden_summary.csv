@@ -1,0 +1,5 @@
+Rule,Flagged Days,Dec 2025 degradation,Mar 2025 sudden drops,12 May 2025 nighttime outage
+Union ($\ge 1$ method),240,Yes,Yes,Yes
+Agreement ($\ge 2$ methods),57,Yes,Yes,Yes
+Strong Agreement ($\ge 3$ methods),21,Yes,Yes,Yes
+All-method (4 methods),4,No,Yes,Yes

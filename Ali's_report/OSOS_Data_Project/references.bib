@@ -1,0 +1,424 @@
+% =====================================================================
+% References for BEDAŞ Predictive Maintenance Project
+% =====================================================================
+
+% ---------- Anomaly Detection: general surveys and taxonomies ----------
+@article{chandola2009anomaly,
+  author  = {Chandola, Varun and Banerjee, Arindam and Kumar, Vipin},
+  title   = {Anomaly Detection: {A} Survey},
+  journal = {ACM Computing Surveys},
+  volume  = {41},
+  number  = {3},
+  pages   = {1--58},
+  year    = {2009},
+  doi     = {10.1145/1541880.1541882}
+}
+
+@article{hodge2004survey,
+  author  = {Hodge, Victoria J. and Austin, Jim},
+  title   = {A Survey of Outlier Detection Methodologies},
+  journal = {Artificial Intelligence Review},
+  volume  = {22},
+  number  = {2},
+  pages   = {85--126},
+  year    = {2004}
+}
+
+@book{aggarwal2017outlier,
+  author    = {Aggarwal, Charu C.},
+  title     = {Outlier Analysis},
+  edition   = {2nd},
+  publisher = {Springer},
+  year      = {2017}
+}
+
+@book{hawkins1980identification,
+  author    = {Hawkins, Douglas M.},
+  title     = {Identification of Outliers},
+  publisher = {Chapman and Hall},
+  year      = {1980}
+}
+
+% ---------- Isolation Forest ----------
+@inproceedings{liu2008isolation,
+  author    = {Liu, Fei Tony and Ting, Kai Ming and Zhou, Zhi-Hua},
+  title     = {Isolation Forest},
+  booktitle = {2008 Eighth IEEE International Conference on Data Mining},
+  pages     = {413--422},
+  year      = {2008},
+  doi       = {10.1109/ICDM.2008.17}
+}
+
+@article{liu2012isolation,
+  author  = {Liu, Fei Tony and Ting, Kai Ming and Zhou, Zhi-Hua},
+  title   = {Isolation-Based Anomaly Detection},
+  journal = {ACM Transactions on Knowledge Discovery from Data},
+  volume  = {6},
+  number  = {1},
+  pages   = {1--39},
+  year    = {2012},
+  doi     = {10.1145/2133360.2133363}
+}
+
+@inproceedings{breunig2000lof,
+  author    = {Breunig, Markus M. and Kriegel, Hans-Peter and Ng, Raymond T. and Sander, J{\"o}rg},
+  title     = {{LOF}: Identifying Density-Based Local Outliers},
+  booktitle = {Proceedings of the 2000 ACM SIGMOD International Conference on Management of Data},
+  pages     = {93--104},
+  year      = {2000}
+}
+
+% ---------- Time-series decomposition and statistical anomaly detection ----------
+@article{cleveland1990stl,
+  author  = {Cleveland, Robert B. and Cleveland, William S. and McRae, Jean E. and Terpenning, Irma},
+  title   = {{STL}: A Seasonal-Trend Decomposition Procedure Based on Loess},
+  journal = {Journal of Official Statistics},
+  volume  = {6},
+  number  = {1},
+  pages   = {3--73},
+  year    = {1990}
+}
+
+@book{iglewicz1993outliers,
+  author    = {Iglewicz, Boris and Hoaglin, David C.},
+  title     = {How to Detect and Handle Outliers},
+  publisher = {ASQC Quality Press},
+  address   = {Milwaukee, WI},
+  year      = {1993}
+}
+
+@article{page1954cusum,
+  author  = {Page, E. S.},
+  title   = {Continuous Inspection Schemes},
+  journal = {Biometrika},
+  volume  = {41},
+  number  = {1--2},
+  pages   = {100--115},
+  year    = {1954}
+}
+
+@book{hyndman2021forecasting,
+  author    = {Hyndman, Rob J. and Athanasopoulos, George},
+  title     = {Forecasting: Principles and Practice},
+  edition   = {3rd},
+  publisher = {OTexts},
+  address   = {Melbourne},
+  year      = {2021}
+}
+
+% ---------- Change-point detection ----------
+@article{killick2012pelt,
+  author  = {Killick, Rebecca and Fearnhead, Paul and Eckley, Idris A.},
+  title   = {Optimal Detection of Changepoints with a Linear Computational Cost},
+  journal = {Journal of the American Statistical Association},
+  volume  = {107},
+  number  = {500},
+  pages   = {1590--1598},
+  year    = {2012}
+}
+
+@article{truong2020ruptures,
+  author  = {Truong, Charles and Oudre, Laurent and Vayatis, Nicolas},
+  title   = {Selective Review of Offline Change Point Detection Methods},
+  journal = {Signal Processing},
+  volume  = {167},
+  pages   = {107299},
+  year    = {2020}
+}
+
+@article{aminikhanghahi2017survey,
+  author  = {Aminikhanghahi, Samaneh and Cook, Diane J.},
+  title   = {A Survey of Methods for Time Series Change Point Detection},
+  journal = {Knowledge and Information Systems},
+  volume  = {51},
+  number  = {2},
+  pages   = {339--367},
+  year    = {2017}
+}
+
+% ---------- Gramian Angular Field and image-based time-series representation ----------
+@inproceedings{wang2015gaf,
+  author    = {Wang, Zhiguang and Oates, Tim},
+  title     = {Encoding Time Series as Images for Visual Inspection and Classification Using Tiled Convolutional Neural Networks},
+  booktitle = {Workshops at the Twenty-Ninth AAAI Conference on Artificial Intelligence},
+  year      = {2015}
+}
+
+@inproceedings{wang2015imaging,
+  author    = {Wang, Zhiguang and Oates, Tim},
+  title     = {Imaging Time-Series to Improve Classification and Imputation},
+  booktitle = {Proceedings of the 24th International Joint Conference on Artificial Intelligence (IJCAI)},
+  pages     = {3939--3945},
+  year      = {2015}
+}
+
+@article{malhotra2016lstm,
+  author  = {Malhotra, Pankaj and Ramakrishnan, Anusha and Anand, Gaurangi and Vig, Lovekesh and Agarwal, Puneet and Shroff, Gautam},
+  title   = {{LSTM}-Based Encoder-Decoder for Multi-Sensor Anomaly Detection},
+  journal = {arXiv preprint arXiv:1607.00148},
+  year    = {2016}
+}
+
+% ---------- Supervised learning and gradient boosting ----------
+@article{friedman2001gbm,
+  author  = {Friedman, Jerome H.},
+  title   = {Greedy Function Approximation: A Gradient Boosting Machine},
+  journal = {The Annals of Statistics},
+  volume  = {29},
+  number  = {5},
+  pages   = {1189--1232},
+  year    = {2001}
+}
+
+@inproceedings{chen2016xgboost,
+  author    = {Chen, Tianqi and Guestrin, Carlos},
+  title     = {{XGBoost}: A Scalable Tree Boosting System},
+  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  pages     = {785--794},
+  year      = {2016}
+}
+
+@article{shwartz2022tabular,
+  author  = {Shwartz-Ziv, Ravid and Armon, Amitai},
+  title   = {Tabular Data: Deep Learning is Not All You Need},
+  journal = {Information Fusion},
+  volume  = {81},
+  pages   = {84--90},
+  year    = {2022}
+}
+
+@inproceedings{lundberg2017shap,
+  author    = {Lundberg, Scott M. and Lee, Su-In},
+  title     = {A Unified Approach to Interpreting Model Predictions},
+  booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS)},
+  pages     = {4765--4774},
+  year      = {2017}
+}
+
+% ---------- Class imbalance and oversampling ----------
+@article{chawla2002smote,
+  author  = {Chawla, Nitesh V. and Bowyer, Kevin W. and Hall, Lawrence O. and Kegelmeyer, W. Philip},
+  title   = {{SMOTE}: Synthetic Minority Over-sampling Technique},
+  journal = {Journal of Artificial Intelligence Research},
+  volume  = {16},
+  pages   = {321--357},
+  year    = {2002}
+}
+
+@article{batista2004study,
+  author  = {Batista, Gustavo E. A. P. A. and Prati, Ronaldo C. and Monard, Maria Carolina},
+  title   = {A Study of the Behavior of Several Methods for Balancing Machine Learning Training Data},
+  journal = {ACM SIGKDD Explorations Newsletter},
+  volume  = {6},
+  number  = {1},
+  pages   = {20--29},
+  year    = {2004}
+}
+
+@inproceedings{he2008adasyn,
+  author    = {He, Haibo and Bai, Yang and Garcia, Edwardo A. and Li, Shutao},
+  title     = {{ADASYN}: Adaptive Synthetic Sampling Approach for Imbalanced Learning},
+  booktitle = {2008 IEEE International Joint Conference on Neural Networks},
+  pages     = {1322--1328},
+  year      = {2008}
+}
+
+@article{fernandez2018smote,
+  author  = {Fern{\'a}ndez, Alberto and Garc{\'i}a, Salvador and Herrera, Francisco and Chawla, Nitesh V.},
+  title   = {{SMOTE} for Learning from Imbalanced Data: Progress and Challenges, Marking the 15-Year Anniversary},
+  journal = {Journal of Artificial Intelligence Research},
+  volume  = {61},
+  pages   = {863--905},
+  year    = {2018}
+}
+
+% ---------- Evaluation metrics and classifier performance ----------
+@article{saito2015precision,
+  author  = {Saito, Takaya and Rehmsmeier, Marc},
+  title   = {The Precision-Recall Plot is More Informative than the {ROC} Plot When Evaluating Binary Classifiers on Imbalanced Datasets},
+  journal = {PLoS ONE},
+  volume  = {10},
+  number  = {3},
+  pages   = {e0118432},
+  year    = {2015}
+}
+
+@article{fawcett2006roc,
+  author  = {Fawcett, Tom},
+  title   = {An Introduction to {ROC} Analysis},
+  journal = {Pattern Recognition Letters},
+  volume  = {27},
+  number  = {8},
+  pages   = {861--874},
+  year    = {2006}
+}
+
+@article{hand2009measuring,
+  author  = {Hand, David J.},
+  title   = {Measuring Classifier Performance: A Coherent Alternative to the Area under the {ROC} Curve},
+  journal = {Machine Learning},
+  volume  = {77},
+  number  = {1},
+  pages   = {103--123},
+  year    = {2009}
+}
+
+@article{rousseeuw1987silhouettes,
+  author  = {Rousseeuw, Peter J.},
+  title   = {Silhouettes: {A} Graphical Aid to the Interpretation and Validation of Cluster Analysis},
+  journal = {Journal of Computational and Applied Mathematics},
+  volume  = {20},
+  pages   = {53--65},
+  year    = {1987}
+}
+
+% ---------- Tooling and software ----------
+@article{pedregosa2011scikit,
+  author  = {Pedregosa, Fabian and Varoquaux, Ga{\"e}l and Gramfort, Alexandre and Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and Blondel, Mathieu and Prettenhofer, Peter and Weiss, Ron and Dubourg, Vincent and Vanderplas, Jake and Passos, Alexandre and Cournapeau, David and Brucher, Matthieu and Perrot, Matthieu and Duchesnay, {\'E}douard},
+  title   = {Scikit-learn: Machine Learning in {P}ython},
+  journal = {Journal of Machine Learning Research},
+  volume  = {12},
+  pages   = {2825--2830},
+  year    = {2011}
+}
+
+@book{littlerubin2019,
+  author    = {Little, Roderick J. A. and Rubin, Donald B.},
+  title     = {Statistical Analysis with Missing Data},
+  edition   = {3rd},
+  publisher = {Wiley},
+  year      = {2019}
+}
+
+% ---------- Domain: street lighting and smart metering anomaly detection ----------
+@article{nespoli2024street,
+  author  = {Nespoli, Alfredo and Tironi, Alberto and Ogliari, Emanuele and Grimaccia, Francesco and Leva, Sonia},
+  title   = {Machine Learning for Street Lighting Anomaly Detection},
+  journal = {Sustainable Energy, Grids and Networks},
+  volume  = {37},
+  pages   = {101264},
+  year    = {2024}
+}
+
+@inproceedings{ptacek2022road,
+  author    = {Ptacek, Michal and Vrbka, Jakub and Machacek, Jan},
+  title     = {Road Lighting System Anomaly Detection},
+  booktitle = {2022 22nd International Scientific Conference on Electric Power Engineering (EPE)},
+  pages     = {1--5},
+  year      = {2022}
+}
+
+@article{himeur2021survey,
+  author  = {Himeur, Yassine and Ghanem, Khalida and Alsalemi, Abdullah and Bensaali, Faycal and Amira, Abbes},
+  title   = {Artificial Intelligence Based Anomaly Detection of Energy Consumption in Buildings: {A} Review, Current Trends and New Perspectives},
+  journal = {Applied Energy},
+  volume  = {287},
+  pages   = {116601},
+  year    = {2021}
+}
+
+@article{wang2020review,
+  author  = {Wang, Xuan and Ahn, Sung-Hoon},
+  title   = {Real-Time Prediction and Anomaly Detection of Electrical Load in a Residential Community},
+  journal = {Applied Energy},
+  volume  = {259},
+  pages   = {114145},
+  year    = {2020}
+}
+
+@article{zhang2023ensemble,
+  author  = {Zhang, Liang and Wen, Jin and Li, Yanfei and Chen, Jianli and Ye, Yunyang and Fu, Yangyang and Livingood, William},
+  title   = {A Review of Machine Learning in Building Load Prediction},
+  journal = {Applied Energy},
+  volume  = {285},
+  pages   = {116452},
+  year    = {2021}
+}
+
+% ---------- Ensemble and multi-method frameworks ----------
+@article{aggarwal2017ensemble,
+  author  = {Aggarwal, Charu C. and Sathe, Saket},
+  title   = {Outlier Ensembles: An Introduction},
+  journal = {Springer},
+  year    = {2017}
+}
+
+@article{ahmad2017realtime,
+  author  = {Ahmad, Subutai and Lavin, Alexander and Purdy, Scott and Agha, Zuha},
+  title   = {Unsupervised Real-Time Anomaly Detection for Streaming Data},
+  journal = {Neurocomputing},
+  volume  = {262},
+  pages   = {134--147},
+  year    = {2017}
+}
+
+% =====================================================================
+% References added for Approach D expansion (GA + PSO + SA pipeline).
+% Entries below are working stubs constructed to match the citation
+% keys used in the methodology text. Verify the exact author list,
+% title, volume, and DOI with the original sources before submission.
+% =====================================================================
+
+@article{nature2025robust,
+  author  = {[Author list to verify]},
+  title   = {Robust Fault Detection in Power Transmission Systems Using Ensemble Tree-Based Methods},
+  journal = {Scientific Reports (Nature)},
+  year    = {2025},
+  note    = {Placeholder entry; verify exact citation}
+}
+
+@article{frontiers2021igaxgboost,
+  author  = {[Author list to verify]},
+  title   = {Transformer Fault Diagnosis Based on an Improved Genetic Algorithm and {XGBoost}},
+  journal = {Frontiers in Energy Research},
+  year    = {2021},
+  note    = {Placeholder entry; verify exact citation}
+}
+
+@article{iet-gtd2018,
+  author  = {[Author list to verify]},
+  title   = {Genetic-Algorithm-Based Feature Selection with {SVM} for Transformer Fault Diagnosis},
+  journal = {IET Generation, Transmission and Distribution},
+  year    = {2018},
+  note    = {Placeholder entry; verify exact citation}
+}
+
+@article{ieee2023pso,
+  author  = {[Author list to verify]},
+  title   = {Particle Swarm Optimization for Hyperparameter Tuning of Machine Learning Classifiers},
+  journal = {IEEE Access},
+  year    = {2023},
+  note    = {Placeholder entry; verify exact citation}
+}
+
+@article{springer2022softcomputing,
+  author  = {[Author list to verify]},
+  title   = {Metaheuristic-Based Hyperparameter Optimization for Classification Tasks},
+  journal = {Soft Computing (Springer)},
+  year    = {2022},
+  note    = {Placeholder entry; verify exact citation}
+}
+
+@article{ieee2015sa,
+  author  = {[Author list to verify]},
+  title   = {Simulated Annealing for Decision Threshold Optimization in Detection Systems},
+  journal = {IEEE Transactions on [verify]},
+  year    = {2015},
+  note    = {Placeholder entry; verify exact citation}
+}
+
+@article{sciencedirect2023sa,
+  author  = {[Author list to verify]},
+  title   = {Simulated Annealing-Based {SVM} Optimization for Imbalanced Classification},
+  journal = {Expert Systems with Applications},
+  year    = {2023},
+  note    = {Placeholder entry; verify exact citation}
+}
+
+@article{ieee2022smote,
+  author  = {[Author list to verify]},
+  title   = {A Systematic Evaluation of {SMOTE}-Based Methods on Imbalanced Datasets},
+  journal = {IEEE Access},
+  year    = {2022},
+  note    = {Placeholder entry; verify exact citation}
+}

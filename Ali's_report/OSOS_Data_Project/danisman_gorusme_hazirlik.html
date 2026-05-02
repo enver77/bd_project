@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danışman Görüşmesi – Soru & Cevap Hazırlığı</title>
+<style>
+  :root {
+    --primary: #1e3a8a;
+    --secondary: #3b82f6;
+    --accent: #f59e0b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --question-bg: #eff6ff;
+    --answer-bg: #f0fdf4;
+    --highlight: #fef3c7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 30px 20px;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--card);
+    padding: 50px 60px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  header {
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+  }
+  h1 {
+    color: var(--primary);
+    font-size: 2.2em;
+    margin-bottom: 10px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.05em;
+  }
+  .meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    background: var(--question-bg);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    color: var(--primary);
+  }
+  .toc {
+    background: var(--bg);
+    border-left: 4px solid var(--secondary);
+    padding: 20px 25px;
+    margin: 30px 0 40px;
+    border-radius: 6px;
+  }
+  .toc h3 {
+    color: var(--primary);
+    margin-bottom: 12px;
+    font-size: 1.1em;
+  }
+  .toc ol {
+    margin-left: 20px;
+  }
+  .toc li {
+    margin: 6px 0;
+    color: var(--text);
+  }
+  .toc a {
+    color: var(--secondary);
+    text-decoration: none;
+  }
+  .toc a:hover { text-decoration: underline; }
+
+  section {
+    margin: 50px 0;
+  }
+  h2 {
+    color: var(--primary);
+    font-size: 1.7em;
+    padding: 12px 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 .num {
+    background: var(--primary);
+    color: white;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85em;
+    flex-shrink: 0;
+  }
+  .qa {
+    margin: 25px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .question {
+    background: var(--question-bg);
+    padding: 16px 22px;
+    font-weight: 600;
+    color: var(--primary);
+    border-left: 4px solid var(--secondary);
+    font-size: 1.05em;
+  }
+  .question::before {
+    content: "❓ ";
+    margin-right: 6px;
+  }
+  .answer {
+    padding: 20px 25px;
+    background: white;
+  }
+  .answer p {
+    margin: 12px 0;
+  }
+  .answer ul, .answer ol {
+    margin: 12px 0 12px 25px;
+  }
+  .answer li {
+    margin: 6px 0;
+  }
+  blockquote {
+    background: var(--answer-bg);
+    border-left: 4px solid #10b981;
+    padding: 15px 20px;
+    margin: 15px 0;
+    border-radius: 4px;
+    font-style: normal;
+  }
+  code {
+    background: #f1f5f9;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.92em;
+    color: #be185d;
+  }
+  .highlight {
+    background: var(--highlight);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 0.95em;
+  }
+  th {
+    background: var(--primary);
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:nth-child(even) td {
+    background: var(--bg);
+  }
+  tr:hover td {
+    background: var(--question-bg);
+  }
+  .formula {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 16px 20px;
+    border-radius: 6px;
+    font-family: 'Consolas', monospace;
+    text-align: center;
+    margin: 15px 0;
+    font-size: 1.05em;
+  }
+  .key-point {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 5px solid var(--accent);
+    padding: 18px 22px;
+    margin: 20px 0;
+    border-radius: 6px;
+  }
+  .key-point strong {
+    color: #92400e;
+  }
+  .summary-box {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    padding: 30px 35px;
+    border-radius: 10px;
+    margin: 40px 0;
+    text-align: center;
+  }
+  .summary-box h3 {
+    margin-bottom: 15px;
+    font-size: 1.3em;
+  }
+  .summary-box p {
+    font-size: 1.1em;
+    line-height: 1.8;
+    font-style: italic;
+  }
+  .axis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+  }
+  .axis-card {
+    background: var(--bg);
+    padding: 18px;
+    border-radius: 8px;
+    border-top: 4px solid var(--secondary);
+  }
+  .axis-card h4 {
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  footer {
+    margin-top: 60px;
+    padding-top: 25px;
+    border-top: 2px solid var(--border);
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9em;
+  }
+  @media print {
+    body { background: white; padding: 0; }
+    .container { box-shadow: none; padding: 20px; }
+    .qa { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+  }
+  @media (max-width: 768px) {
+    .container { padding: 25px 20px; }
+    h1 { font-size: 1.6em; }
+    h2 { font-size: 1.3em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>📋 Danışman Görüşmesi – Soru & Cevap Hazırlığı</h1>
+  <p class="subtitle"><strong>Konu:</strong> Fault Before Failure – Multi-Paradigm Anomaly Detection in Smart Street Lighting</p>
+  <div class="meta">
+    <span class="meta-item">📊 4 Yöntem</span>
+    <span class="meta-item">🔬 14 Ay Veri</span>
+    <span class="meta-item">⚡ OSOS Smart Metering</span>
+    <span class="meta-item">🏙️ Avcılar Feeder Line</span>
+  </div>
+</header>
+
+<div class="toc">
+  <h3>📑 İçindekiler</h3>
+  <ol>
+    <li><a href="#bolum1">Neden 4 Yöntem Kullandık?</a></li>
+    <li><a href="#bolum2">4 Yöntemi Nasıl Birleştirdik (Harmanladık)?</a></li>
+    <li><a href="#bolum3">GAF Diğer Yöntemlerden Nasıl Ayrılıyor?</a></li>
+    <li><a href="#bolum4">3-Tier (Üç Katmanlı) Yöntemin Çalışması</a></li>
+    <li><a href="#bolum5">Hocanın Eleştirebileceği Konular için Ön Cevaplar</a></li>
+    <li><a href="#ozet">Özet Tek Cümle</a></li>
+  </ol>
+</div>
+
+<!-- BÖLÜM 1 -->
+<section id="bolum1">
+  <h2><span class="num">1</span> Neden 4 Yöntem Kullandık?</h2>
+
+  <div class="qa">
+    <div class="question">S1: Neden tek bir model seçmek yerine 4 farklı yöntem kullandınız? Bu fazlalık değil mi?</div>
+    <div class="answer">
+      <blockquote>
+        <p>Anomali tespit literatüründeki temel bulgu (<strong>Chandola 2009, Aggarwal 2017</strong>) şudur: <span class="highlight">hiçbir tek detektör tüm arıza tiplerini yakalayamaz.</span> Her yöntemin bir "kör noktası" vardır:</p>
+        <ul>
+          <li><strong>Nokta-bazlı (point-level)</strong> detektörler → yavaş yavaş biriken sapmaları (drift) kaçırır</li>
+          <li><strong>Değişim-noktası (change-point)</strong> detektörleri → izole spike'ları kaçırır</li>
+          <li><strong>Denetimli</strong> modeller → yeni/görülmemiş arıza tiplerini kaçırır</li>
+          <li><strong>Denetimsiz</strong> modeller → mevcut sınırlı etiketlerden yararlanamaz</li>
+        </ul>
+      </blockquote>
+      <p>Biz 4 yöntemi <strong>3 ortogonal eksende</strong> seçtik:</p>
+      <div class="axis-grid">
+        <div class="axis-card">
+          <h4>1. Zamansal Çözünürlük</h4>
+          <p>Saatlik (IF, GBDT) vs. Günlük (GAF, 3-tier)</p>
+        </div>
+        <div class="axis-card">
+          <h4>2. Denetim</h4>
+          <p>Denetimsiz (IF, GAF), denetimsiz ensemble (3-tier), denetimli (GBDT)</p>
+        </div>
+        <div class="axis-card">
+          <h4>3. Temsil / Representation</h4>
+          <p>Tablo (IF, GBDT), görüntü (GAF), ayrışım+residual+CP (3-tier)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S2: Hangi yöntem hangi olay tipini yakalıyor?</div>
+    <div class="answer">
+      <table>
+        <tr><th>Olay Tipi</th><th>Yakalayan Yöntem</th></tr>
+        <tr><td>Saatlik nokta sapması (relay timing hatası)</td><td><strong>A</strong> – Saatlik Isolation Forest</td></tr>
+        <tr><td>Tüm-gün yapısal bozulma (gece amplitüdü düşüşü)</td><td><strong>B</strong> – GAF + Autoencoder</td></tr>
+        <tr><td>Günlük seviyede sapma + rejim değişimi</td><td><strong>C</strong> – 3-Tier Ensemble</td></tr>
+        <tr><td>Etiketli arızadan önceki 24 saat</td><td><strong>D</strong> – Supervised Gradient Boosting</td></tr>
+      </table>
+      <div class="key-point">
+        <strong>Somut kanıt:</strong> 4 büyük olayımız var (Mart 2025 ani düşüşler, Şubat 2026 tam blackout, Aralık 2025 progresif bozulma, 12 Mayıs 2025 gece kesintisi). <span class="highlight">Hiçbiri tek bir yöntemle tamamı yakalanamıyor; her biri farklı bir yöntem alt-kümesi tarafından yakalanıyor.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BÖLÜM 2 -->
+<section id="bolum2">
+  <h2><span class="num">2</span> 4 Yöntemi Nasıl Birleştirdik (Harmanladık)?</h2>
+
+  <div class="qa">
+    <div class="question">S3: Bu 4 yöntemi mimari olarak nasıl entegre ettiniz?</div>
+    <div class="answer">
+      <blockquote>
+        <p><strong>Tek paylaşılan ön-işleme (preprocessing) hattı</strong> kullandık. Bu çok kritik:</p>
+        <ul>
+          <li>Ham OSOS Excel (14 ay) → Wide→Long dönüşüm → De-duplikasyon → Gap-aware imputasyon → Calendar validation</li>
+          <li>Sonuç: <code>10,214</code> saatlik / <code>424</code> günlük gözlem</li>
+          <li><strong>Aynı temiz veriden</strong> 4 paralel akış besleniyor (Şekil: pipeline diagram)</li>
+        </ul>
+        <p>Bu önemli çünkü performans farklarının veri temizleme tutarsızlığından gelmediğinden emin oluyoruz.</p>
+      </blockquote>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S4: 4 yöntemin çıktılarını nasıl birleştiriyorsunuz?</div>
+    <div class="answer">
+      <p>İki seviyeli birleştirme var:</p>
+
+      <p><strong>(a) 3-tier ensemble içinde (yöntem C):</strong> Ağırlıklı skor füzyonu</p>
+      <div class="formula">S<sub>final</sub> = 0.35 × S<sub>1</sub> + 0.35 × S<sub>2</sub> + 0.30 × S<sub>3</sub></div>
+
+      <p><strong>(b) 4 yöntem arası:</strong> "Cross-Model Benchmark" – union & agreement analizi</p>
+      <ul>
+        <li><strong>Union (birleşim):</strong> Herhangi bir model işaretlerse → analiste git (recall maksimize)</li>
+        <li><strong>Agreement (mutabakat):</strong> En az 2 model aynı günü işaretlerse → saha ekibi gönder (precision artar)</li>
+      </ul>
+      <div class="key-point">
+        <strong>Uçtan uca karar kuralı:</strong> "act on union, validate on agreement"
+      </div>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S5: Bu literatürde nasıl geçiyor?</div>
+    <div class="answer">
+      <blockquote>
+        <p><strong>Ensemble anomaly detection</strong> literatüründe (Aggarwal &amp; Sathe 2017, Zhang 2023) iki ana yaklaşım var:</p>
+        <ol>
+          <li><strong>Score-level fusion:</strong> Skorları doğrudan kombine et (bizim 3-tier'da yaptığımız)</li>
+          <li><strong>Decision-level fusion / voting:</strong> Her model bağımsız karar verir, oy çokluğu (bizim 4 yöntem arası yaptığımız)</li>
+        </ol>
+        <p>Bizim yaptığımız bunların <span class="highlight">hibridi</span>: 3-tier içinde score fusion, 4 paradigma arasında decision-level voting + complementarity tablosu. Bu literatürde <strong>"stacked / hierarchical ensemble"</strong> olarak geçer.</p>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- BÖLÜM 3 -->
+<section id="bolum3">
+  <h2><span class="num">3</span> GAF Diğer Yöntemlerden Nasıl Ayrılıyor?</h2>
+
+  <div class="qa">
+    <div class="question">S6: GAF'ın ayırt edici özelliği nedir?</div>
+    <div class="answer">
+      <blockquote>
+        <p>Tek farklı yönü: <strong>Veriyi resim olarak temsil ediyor.</strong> Diğer 3 yöntem (IF, 3-tier, GBDT) tablo (tabular) verisi üzerinde çalışır. GAF ise:</p>
+      </blockquote>
+      <div class="formula">24-saatlik vektör → [-1,1]'e normalize → arccos ile açısal uzaya → 24×24 matris (image)</div>
+      <p>Matrisin <code>(i,j)</code> hücresi → <code>i</code>. ve <code>j</code>. saatler arasındaki <strong>açısal ilişkinin kosinüsü</strong>. Yani sıradan değerleri değil, <span class="highlight">saatler-arası ilişkileri</span> kodluyor.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S7: Bu pratikte ne kazandırıyor?</div>
+    <div class="answer">
+      <blockquote>
+        <p>Diğer yöntemler "bu saat anormal mi?" diye sorar. GAF <strong>"bu günün şekli normal mi?"</strong> diye sorar.</p>
+        <p><strong>Örnek:</strong> Toplam günlük tüketim normal olabilir ama gece amplitüdü düşmüş ve sabah-transition kayma yapmışsa → günlük toplam üzerinden bakan 3-tier bunu zayıf işaretler, GAF güçlü işaretler.</p>
+      </blockquote>
+      <div class="key-point">
+        <strong>Bizim sonuç:</strong> Mid-Aralık 2025'ten itibaren çok haftalık gece amplitüdü düşüşü GAF tarafından yakalandı – diğer yöntemler bunu izole gün anomalisi olarak görür ama GAF <em>yapısal/sürekli</em> olduğunu ortaya çıkarır.
+      </div>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S8: Neden Autoencoder kullandınız GAF üstüne?</div>
+    <div class="answer">
+      <p>GAF sadece bir representation (temsil). Onun üzerinde anomali skorlamak gerekiyor.</p>
+      <p><strong>Autoencoder mimarimiz:</strong></p>
+      <div class="formula">576 → 64 → 16 → 64 → 576</div>
+      <p>16-boyutlu <strong>undercomplete bottleneck</strong> zorunluluğu, modelin sadece "normal günün dominant yapısını" öğrenmesini sağlar (Goodfellow ve ark. 2016). Anormal bir gün geldiğinde reconstruction error yüksek olur.</p>
+      <div class="key-point">
+        <strong>Mantık:</strong> Model tanıdığını iyi yeniden üretir, tanımadığını üretemez.
+      </div>
+      <p>Ek olarak <strong>mask-aware scoring</strong> uyguladık: Imputed (doldurulmuş) saatlerin reconstruction error'a katkısı düşük tutulur ki "veri eksikliği" "anomali" olarak yansımasın.</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S9: GAF literatürde nasıl yer alıyor?</div>
+    <div class="answer">
+      <blockquote>
+        <p><strong>Wang &amp; Oates (2015)</strong> "Imaging Time-Series" → Time series'i görüntüye çevirme fikrinin orijinal makalesi. CNN ile sınıflandırma için önerilmişti.</p>
+        <p>Bizim yaptığımız extension: <strong>anomaly detection için autoencoder ile birleştirme.</strong> Bu son yıllarda endüstriyel sinyal analizinde sıkça görülen bir yaklaşım.</p>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- BÖLÜM 4 -->
+<section id="bolum4">
+  <h2><span class="num">4</span> 3-Tier (Üç Katmanlı) Yöntemin Çalışması</h2>
+
+  <div class="qa">
+    <div class="question">S10: 3-tier yapısının mantığı nedir? Bir tane Isolation Forest neden yetmedi?</div>
+    <div class="answer">
+      <p>3-tier ensemble <strong>kendi içinde</strong> mini bir multi-paradigm sistem. Üç temel arıza modu var ve her biri farklı detektör gerektirir:</p>
+      <table>
+        <tr><th>Tier</th><th>Hedef</th><th>Yöntem</th></tr>
+        <tr><td><strong>Tier 1</strong></td><td>Tek-gün ve kısa-burst anomaliler</td><td>İstatistiksel residual (STL + MAD + CUSUM + rolling baseline)</td></tr>
+        <tr><td><strong>Tier 2</strong></td><td>Çok-değişkenli günlük operasyon anomalisi</td><td>Daily Isolation Forest (19 feature)</td></tr>
+        <tr><td><strong>Tier 3</strong></td><td>Kalıcı rejim değişimi (regime shift)</td><td>PELT change-point detection</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S11: Tier 1'i detaylandırır mısınız?</div>
+    <div class="answer">
+      <p><strong>Tier 1 = 3 sinyalin birleşimi:</strong></p>
+
+      <p><strong>1. STL Decomposition + Modified Z-Score (MAD-based)</strong></p>
+      <ul>
+        <li>Periyodik bileşeni çıkar → residual üzerinde median ve MAD ile <code>|M_i| &gt; 3.5</code> threshold (sadece negatif tarafa, çünkü under-consumption izliyoruz)</li>
+        <li>Mean/std değil <strong>median/MAD</strong> çünkü tek aşırı gün scale'i şişirip diğer anomalileri maskeler</li>
+      </ul>
+
+      <p><strong>2. CUSUM Control Chart</strong> (Page 1954)</p>
+      <ul>
+        <li>Tek başına eşiği aşmayan, ama sürekli baseline altında kalan günleri yakalar</li>
+        <li><code>k = 0.5σ</code>, alarm <code>h = 5σ</code></li>
+        <li><strong>Yavaş ampul bozulması</strong> tipik kullanım senaryosu</li>
+      </ul>
+
+      <p><strong>3. Rolling-Baseline Deviation</strong></p>
+      <ul>
+        <li><code>(daily_kwh − 28d_median) / 28d_median</code> üzerine MAD score</li>
+        <li>Bu kritik: STL veri 1.16 yıl olduğu için Mayıs-Ağustos'ta residual ≈ 0 oluyor; rolling baseline bu kör noktayı kapatıyor (12 Mayıs 2025 olayını bu sayede yakaladık)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S12: Tier 2 neden saatlik IF'ten farklı?</div>
+    <div class="answer">
+      <blockquote>
+        <p><strong>Saatlik IF (Yöntem A):</strong> 24 saat içindeki tek bir noktanın anormal olup olmadığını sorar (örn. "saat 14'te 7 kWh çekmek anormal mi?")</p>
+        <p><strong>Tier 2 (günlük IF):</strong> 19-boyutlu <strong>günün operasyonel imzasının</strong> anormal olup olmadığını sorar (energy level + active-hours + delta + zscore + sezonsal pozisyon hep birlikte).</p>
+      </blockquote>
+      <p>Robust scaler (median/IQR) kullandık çünkü standard scaler outlier'lardan etkilenir.</p>
+      <div class="key-point">
+        <strong>Stabilite testi:</strong> 5 farklı random seed'le → ortalama Jaccard = <span class="highlight">0.922</span> (yani işaretlenen günler seed'den bağımsız).
+      </div>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S13: Tier 3 (PELT) nedir, nasıl çalışır?</div>
+    <div class="answer">
+      <p><strong>PELT = Pruned Exact Linear Time</strong> (Killick 2012). Offline change-point detection.</p>
+      <p>Bizim kullanımımız:</p>
+      <ul>
+        <li><strong>RBF cost function</strong> (Gaussian varsayımı yok)</li>
+        <li><strong>Penalty = 10</strong> (sensitivity sweep ile kalibre edildi: pen={5,10,20} → CP={9,7,3})</li>
+        <li>Her tespit edilen change-point için ±14-gün öncesi ve sonrası ortalaması alınır</li>
+      </ul>
+      <p>Göreli değişim oranına göre tip atanır:</p>
+      <table>
+        <tr><th>Oran</th><th>Tip</th></tr>
+        <tr><td><code>&lt; -99%</code></td><td><strong>Complete outage</strong> (tam blackout)</td></tr>
+        <tr><td><code>-99% ile -20%</code></td><td><strong>Sudden drop</strong></td></tr>
+        <tr><td><code>-20% ile -5%</code></td><td><strong>Partial fault</strong></td></tr>
+        <tr><td><code>&gt; +10%</code></td><td><strong>Grid increase</strong> (yeni kurulum, ampul ekleme)</td></tr>
+      </table>
+      <div class="key-point">
+        <strong>Niye gerekli?</strong> Tier 1 ve Tier 2 "günlük baseline'dan sapma" arar. Ama bir kalıcı rejim değişiminde <span class="highlight">yeni baseline</span> oluşur ve sonraki günler artık "normal" görünür. Sadece change-point detection bu kalıcı kaymayı yakalayabilir.
+      </div>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S14: Tier'ları nasıl birleştiriyorsunuz?</div>
+    <div class="answer">
+      <p><strong>Final severity:</strong></p>
+      <div class="formula">S<sub>final</sub> = 0.35 × S<sub>1</sub> + 0.35 × S<sub>2</sub> + 0.30 × S<sub>3</sub></div>
+      <ul>
+        <li>Tier 1 ve 2 her gün skor üretir → eşit ağırlık (0.35)</li>
+        <li>Tier 3 sadece change-point'in ±2 gün etrafında tetiklenir → daha seyrek tetiklendiği için 0.30</li>
+      </ul>
+      <p><strong>Voting count v ∈ {0,1,2,3}:</strong> Kaç tier bağımsız işaretledi.</p>
+
+      <p><strong>Confidence kuralı:</strong></p>
+      <ul>
+        <li><strong>High:</strong> S<sub>final</sub> ≥ 0.45 veya v ≥ 2</li>
+        <li><strong>Moderate:</strong> S<sub>final</sub> ≥ 0.20 veya v ≥ 1</li>
+        <li><strong>Low:</strong> Diğer</li>
+      </ul>
+      <div class="key-point">
+        <strong>Physical support flag:</strong> Ham tüketim sapması <code>&lt; -20%</code> ise "fiziksel destekli" olarak işaretlenir → matematiksel anomaliyi gerçek enerji kaybından ayırır.
+      </div>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S15: Ağırlıkları (0.35/0.35/0.30) nasıl belirlediniz?</div>
+    <div class="answer">
+      <blockquote>
+        <p>Sensitivity analysis yaptık: Her ağırlığı ±0.10 perturbe ettik (9 perturbation), high-confidence günler set'i en fazla 3 gün değişti, Jaccard similarity > 0.86 kaldı.</p>
+        <p><span class="highlight">Yani sonuçlar bu ağırlık seçimine kritik bağlı değil</span> – 4 ana olay 9 perturbasyonda da yakalanıyor. Bu 0.35/0.35/0.30 tuned bir optimum değil, principled bir seçim (Tier 1 ve 2 comparable depth, Tier 3 sparser firing).</p>
+      </blockquote>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S16: 3-tier sonuçları ne kadar başarılı?</div>
+    <div class="answer">
+      <table>
+        <tr><th>Metrik</th><th>Değer</th></tr>
+        <tr><td>Ground truth recall (rpt-300, 6 olay)</td><td>2/6 at threshold 0.10</td></tr>
+        <tr><td>Silhouette coefficient (4-tier score space)</td><td><strong>0.509</strong></td></tr>
+        <tr><td>Bootstrap Jaccard (Tier 2 stability)</td><td><strong>0.922</strong></td></tr>
+        <tr><td>Physical-plausibility (flagged days with &lt; -20% deviation)</td><td>%50.7</td></tr>
+        <tr><td>Tier 1 ∩ Tier 3 Jaccard</td><td>0.036 (kasıtlı – farklı olayları yakalamaları gerekiyor)</td></tr>
+      </table>
+      <p><strong>Ana bulgular:</strong></p>
+      <ul>
+        <li><strong>Şubat 2026 blackout:</strong> S=1.000, v=3 (3 tier birden) – ground truth'ta yok, <span class="highlight">yeni operasyonel keşif</span></li>
+        <li><strong>Aralık 2025 progresif bozulma:</strong> 9 Aralık (S=0.658), 31 Aralık (S=0.621) – CUSUM-uyumlu kümülatif düşüş</li>
+        <li><strong>Mart 2025 sudden drops:</strong> 12 Mart (S=0.629), 17 Mart (S=0.565) – PELT 2 Mart'ta partial-fault change-point ile destekledi</li>
+        <li><strong>12 Mayıs 2025:</strong> S=0.280, moderate – ground truth'taki <strong>tek "geceleyen"</strong> olay; biz yakaladık</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- BÖLÜM 5 -->
+<section id="bolum5">
+  <h2><span class="num">5</span> Hocanın Eleştirebileceği Konular için Ön Cevaplar</h2>
+
+  <div class="qa">
+    <div class="question">S17: F1 = 0.10, recall = 2/6 – bu çok düşük değil mi?</div>
+    <div class="answer">
+      <p>Bu mütevazi sayıların 4 yapısal nedeni var (rapor §6.7 Discussion'da):</p>
+
+      <p><strong>(1) Observability ceiling:</strong> Ground truth'taki 6 olaydan <span class="highlight">5'i gündüz saatlerinde</span> (lambalar zaten kapalı, sıfır tüketim üstüne kesinti = sinyal yok). Yani recall'un paydası matematiksel olarak imkânsız olayları içeriyor.</p>
+
+      <p><strong>(2) Ekstrem class imbalance:</strong> %5.59 positive rate. Saito (2015) ve Hand (2009) bu rejimde F1'in modeli underrepresent ettiğini açıkça söyler. 41 fail-adjacent saatten 27'si yakalandı (%65.9 recall) – operasyonel olarak anlamlı.</p>
+
+      <p><strong>(3) Kısa gözlem süresi:</strong> 14 ay (1.16 yıllık döngü). STL <code>period=365</code> için bilinen-zayıf konfigürasyon. 3+ yıl gerekir.</p>
+
+      <p><strong>(4) Real-world data noise:</strong> ~380 saatlik communication gap, sistematik calendar bug'ları, etiketsiz operasyonel olaylar (bakım, holiday extension).</p>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S18: Ground truth'ta olmayan olayları nasıl doğrulayacaksınız?</div>
+    <div class="answer">
+      <blockquote>
+        <p>Açıkça belirtiyoruz ki bu çalışmanın <strong>field validation</strong> limitasyonu var. Şubat 2026 blackout 3 tier'da da S=1.000 ile çıkıyor, v=3 tam mutabakat – ama saha ekibi raporu ile cross-check yapamadık.</p>
+        <p><strong>Future work:</strong> bakım ekibi dispatch loglarını ground truth'a eklemek.</p>
+      </blockquote>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S19: Neden GAF için bottleneck = 16? Sweep yaptınız mı?</div>
+    <div class="answer">
+      <p>Hayır, sistematik 8/16/32 sweep yapmadık (limitasyon olarak belirtiyoruz). 16 seçimi:</p>
+      <ul>
+        <li>576-boyutlu input ama bu 24 bağımsız ölçümün pairwise ilişkisi (Wang &amp; Oates 2015) – yani gerçek bilgi içeriği zaten 24 dim civarında</li>
+        <li>Yong &amp; Brintrup (2022): bottleneck identity-function'ı engellemek için gerekli</li>
+        <li>16 = 24'ten küçük ama dominant yapıyı (gece amplitüdü, day-night kontrast, transition timing, simetri) tutacak kadar büyük</li>
+      </ul>
+      <div class="key-point">
+        Bu <strong>literatürle tutarlı bir baseline</strong>, optimum değil – dürüstçe söylüyoruz.
+      </div>
+    </div>
+  </div>
+
+  <div class="qa">
+    <div class="question">S20: Neden 4 ayrı paradigma? Tek bir end-to-end deep model olmaz mıydı?</div>
+    <div class="answer">
+      <p>Olur ama:</p>
+      <ul>
+        <li><strong>Veri çok küçük:</strong> 424 gün, 28 etiketli olay → end-to-end deep learning under-fit veya over-fit'e yatkın</li>
+        <li><strong>Açıklanabilirlik:</strong> 4 metodun her birinin <em>neden</em> hangi olayı yakaladığını söyleyebiliyoruz (PELT bir change-point lokalize ediyor, GBDT feature importance veriyor). End-to-end black box bunu kaybeder.</li>
+        <li><strong>Operasyonel hedef:</strong> Saha ekibi dispatch'i için "neden bu gün?" sorusuna cevap gerekli – multi-method framework bunu doğal sağlıyor</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ÖZET -->
+<section id="ozet">
+  <div class="summary-box">
+    <h3>📌 Özet Tek Cümle</h3>
+    <p>"Bu çalışmanın katkısı yeni bir detektör icat etmek değil; 4 olgun paradigmanın aynı veri üzerinde paralel uygulanması, hangi olay tipinin hangi yöntem alt-kümesi tarafından yakalandığının haritalanması, ve operasyonel öneri olarak 'union'a göre triaj, agreement'a göre dispatch' kuralının kanıtlanmasıdır."</p>
+  </div>
+</section>
+
+<footer>
+  <p>📅 Hazırlık tarihi: Mayıs 2026 &nbsp;|&nbsp; 📄 Kaynak: <code>main_last version.tex</code></p>
+  <p style="margin-top: 8px;">Bu doküman danışman görüşmesi öncesi ön hazırlık amaçlıdır.</p>
+</footer>
+
+</div>
+</body>
+</html>

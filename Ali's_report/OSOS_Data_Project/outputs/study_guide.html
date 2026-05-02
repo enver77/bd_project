@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BEDAŞ Pipeline — Çalışma Rehberi</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f4f8;
+    color: #1a2e4a;
+    line-height: 1.7;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a2e4a 0%, #2d4a6e 100%);
+    color: #fff;
+    padding: 36px 60px;
+  }
+  header h1 { font-size: 26px; font-weight: 800; letter-spacing: 0.5px; }
+  header p  { font-size: 13px; color: #a0c0e0; margin-top: 6px; }
+
+  /* Language toggle */
+  .lang-bar {
+    background: #fff;
+    border-bottom: 2px solid #dde4ed;
+    padding: 12px 60px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .lang-bar span { font-size: 12px; color: #7a8a9a; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .lang-btn {
+    padding: 6px 18px;
+    border-radius: 20px;
+    border: 2px solid #2d4a6e;
+    background: transparent;
+    color: #2d4a6e;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lang-btn.active {
+    background: #2d4a6e;
+    color: #fff;
+  }
+
+  main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Section card */
+  .section {
+    background: #fff;
+    border-radius: 14px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid #eef2f7;
+  }
+  .section-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .s1 { background: #dbeafe; }
+  .s2 { background: #dcfce7; }
+  .s3 { background: #fef3c7; }
+  .s4 { background: #ede9fe; }
+  .s5 { background: #fce7f3; }
+  .s6 { background: #e0f2fe; }
+
+  .section-title h2 { font-size: 17px; font-weight: 800; color: #1a2e4a; }
+  .section-title p  { font-size: 11px; color: #7a8a9a; margin-top: 2px; font-style: italic; }
+
+  .lang-content { padding: 24px 28px; display: none; }
+  .lang-content.visible { display: block; }
+
+  .lang-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .tr-tag { background: #fef3c7; color: #92400e; }
+  .en-tag { background: #dbeafe; color: #1e40af; }
+
+  h3 { font-size: 14px; font-weight: 700; color: #2d4a6e; margin: 18px 0 8px; }
+  h3:first-child { margin-top: 0; }
+  p  { font-size: 13.5px; color: #374151; margin-bottom: 10px; }
+
+  code {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 16px;
+    display: block;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    color: #1e293b;
+    margin: 10px 0;
+    line-height: 1.6;
+    white-space: pre;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  thead tr { background: #2d4a6e; color: #fff; }
+  thead th { padding: 9px 14px; text-align: left; font-weight: 600; }
+  tbody tr { border-bottom: 1px solid #eef2f7; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody td { padding: 8px 14px; color: #374151; }
+
+  .highlight-box {
+    background: linear-gradient(135deg, #1a2e4a, #2d4a6e);
+    color: #fff;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+  .highlight-box strong { color: #fcd34d; }
+
+  .divider {
+    border: none;
+    border-top: 1px dashed #dde4ed;
+    margin: 20px 0;
+  }
+
+  ul { padding-left: 20px; margin-bottom: 10px; }
+  ul li { font-size: 13.5px; color: #374151; margin-bottom: 4px; }
+
+  .formula {
+    background: #fafafa;
+    border-left: 4px solid #2d4a6e;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    font-family: 'Consolas', monospace;
+    font-size: 14px;
+    color: #1e293b;
+    margin: 10px 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BEDAŞ Lighting Fault Detection — Çalışma Rehberi / Study Guide</h1>
+  <p>Ali Gökay Bozok · MIS400 Graduation Project · 3-Tier Anomaly Detection Pipeline</p>
+</header>
+
+<div class="lang-bar">
+  <span>Dil / Language:</span>
+  <button class="lang-btn active" onclick="setLang('tr')">Türkçe</button>
+  <button class="lang-btn" onclick="setLang('en')">English</button>
+  <button class="lang-btn" onclick="setLang('both')">Her İkisi / Both</button>
+</div>
+
+<main>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- 1. STL -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s1">📈</div>
+      <div class="section-title">
+        <h2>Tier 1a — STL Decomposition</h2>
+        <p>Seasonal-Trend Decomposition using LOESS · Cleveland et al., 1990</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr" id="stl-tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Ne Yapar?</h3>
+      <p>Ham günlük tüketim serisini 3 bileşene ayırır:</p>
+      <ul>
+        <li><strong>Trend</strong> → Uzun vadeli yükseliş/düşüş</li>
+        <li><strong>Seasonal</strong> → Yıllık tekrar eden mevsimsel desen (kış = uzun gece = fazla tüketim)</li>
+        <li><strong>Residual</strong> → Açıklanamayan kısım — trend ve mevsim çıktıktan sonra kalan</li>
+      </ul>
+      <h3>Neden Residual'da Arıyoruz?</h3>
+      <p>Mevsimsel etkiyi ve uzun vadeli trendi çıkardık. Geriye kalan ani sapmalar gerçek arızaları işaret ediyor. Ham seride ararsak mevsim etkisini anomali sanabiliriz.</p>
+      <h3>Kısıtlama</h3>
+      <p>Sadece 14 aylık verimiz var (≈1.16 yıllık döngü). STL mevsimsel bileşeni neredeyse tüm varyasyonu absorbe ediyor → residual aylarca neredeyse sıfır. Bu yüzden T1c (rolling baseline) ile destekledik.</p>
+      <div class="highlight-box">
+        <strong>Özet:</strong> STL "Bu günün tüketimi mevsim ve trend dışında ne kadar sapkın?" sorusunu yanıtlar.
+      </div>
+    </div>
+
+    <div class="lang-content en" id="stl-en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>What Does It Do?</h3>
+      <p>Decomposes the daily consumption series into 3 components:</p>
+      <ul>
+        <li><strong>Trend</strong> → Long-term rise/fall</li>
+        <li><strong>Seasonal</strong> → Annual repeating pattern (winter = longer night = more consumption)</li>
+        <li><strong>Residual</strong> → Unexplained part — what remains after removing trend and seasonality</li>
+      </ul>
+      <h3>Why Detect Anomalies in Residuals?</h3>
+      <p>After removing seasonal and trend effects, remaining sharp deviations point to real faults. Searching in raw data risks confusing seasonal variation with anomalies.</p>
+      <h3>Limitation</h3>
+      <p>Only 14 months of data (≈1.16 annual cycles). STL's seasonal component absorbs nearly all variation → residuals near zero for months 3–14. Supplemented with T1c (rolling baseline deviation).</p>
+      <div class="highlight-box">
+        <strong>Summary:</strong> STL answers "How much does today's consumption deviate beyond seasonal and trend effects?"
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- 2. Modified Z-Score -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s1">📊</div>
+      <div class="section-title">
+        <h2>Tier 1a — Modified Z-Score</h2>
+        <p>Iglewicz & Hoaglin, 1993 · Robust outlier detection</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr" id="mzs-tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Klasik Z-Score'un Sorunu</h3>
+      <p>Klasik Z-Score ortalama ve standart sapma kullanır. Ama anomali olan günler hesabı bozar — ortalamayı kendine doğru çeker.</p>
+      <h3>Çözüm: MAD Kullan</h3>
+      <div class="formula">M = 0.6745 × (x − medyan) / MAD</div>
+      <p><strong>MAD</strong> = Median Absolute Deviation = değerlerin medyandan mutlak sapmalarının medyanı. Aykırı değerlere karşı dayanıklı.</p>
+      <h3>Eşik ve Şiddet</h3>
+      <ul>
+        <li>Eşik: <code style="display:inline;padding:2px 6px;">|M| > 3.5</code> → anomali</li>
+        <li>Biz sadece negatif yönü flagliyoruz (tüketim düşüşü)</li>
+        <li>Şiddet skoru: <code style="display:inline;padding:2px 6px;">min(|M| / 7.0, 1.0)</code> → [0,1] arası</li>
+      </ul>
+      <div class="highlight-box">
+        <strong>Özet:</strong> "Bu gün normal günlere kıyasla istatistiksel olarak ne kadar sapkın?" sorusunu aykırı değerlere dayanıklı şekilde yanıtlar.
+      </div>
+    </div>
+
+    <div class="lang-content en" id="mzs-en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>Problem with Classic Z-Score</h3>
+      <p>Classic Z-Score uses mean and standard deviation. Anomalous days corrupt the calculation — they pull the mean toward themselves.</p>
+      <h3>Solution: Use MAD</h3>
+      <div class="formula">M = 0.6745 × (x − median) / MAD</div>
+      <p><strong>MAD</strong> = Median Absolute Deviation = median of absolute deviations from the median. Robust to outliers.</p>
+      <h3>Threshold and Severity</h3>
+      <ul>
+        <li>Threshold: <code style="display:inline;padding:2px 6px;">|M| > 3.5</code> → anomaly</li>
+        <li>We flag only negative direction (consumption drop)</li>
+        <li>Severity score: <code style="display:inline;padding:2px 6px;">min(|M| / 7.0, 1.0)</code> → range [0,1]</li>
+      </ul>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Answers "How statistically deviant is today compared to normal days?" in a way that is robust to outliers.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- 3. CUSUM -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s1">📉</div>
+      <div class="section-title">
+        <h2>Tier 1b — CUSUM Control Chart</h2>
+        <p>Page, 1954 · Cumulative sum for gradual drift detection</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr" id="cusum-tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Z-Score Neyi Kaçırır?</h3>
+      <p>Z-Score tek günlük anlık sapmaları yakalar. Ama arıza kademeli geliyorsa? Her gün biraz biraz düşüyor, hiçbir gün eşiği geçmiyor ama <strong>birikim</strong> var.</p>
+      <h3>CUSUM Formülü</h3>
+      <div class="formula">S⁻(i) = max(0,  S⁻(i−1) − x(i) − k)</div>
+      <ul>
+        <li><strong>k = 0.5σ</strong> → referans değeri (küçük dalgalanmaları filtreler)</li>
+        <li><strong>h = 5σ</strong> → alarm eşiği</li>
+        <li>S⁻ > h olduğunda alarm üretir</li>
+      </ul>
+      <h3>Pratik Anlam</h3>
+      <p>Sokak lambaları yavaş yavaş azalıyorsa (ampuller birer birer yanıyorsa) Z-Score uyarmaz. CUSUM her gün biraz düşüşü biriktirerek alarm üretiyor.</p>
+      <div class="highlight-box">
+        <strong>Özet:</strong> Z-Score anlık şoku yakalar. CUSUM kademeli bozulmayı birikimli olarak yakalar. Birbirini tamamlarlar.
+      </div>
+    </div>
+
+    <div class="lang-content en" id="cusum-en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>What Does Z-Score Miss?</h3>
+      <p>Z-Score catches single-day sharp drops. But what if the fault develops gradually? Each day drops slightly, never crossing the threshold — but there is a <strong>cumulative drift</strong>.</p>
+      <h3>CUSUM Formula</h3>
+      <div class="formula">S⁻(i) = max(0,  S⁻(i−1) − x(i) − k)</div>
+      <ul>
+        <li><strong>k = 0.5σ</strong> → reference value (filters small fluctuations)</li>
+        <li><strong>h = 5σ</strong> → alarm threshold</li>
+        <li>Alarm raised when S⁻ > h</li>
+      </ul>
+      <h3>Practical Meaning</h3>
+      <p>If street lights gradually dim (bulbs failing one by one), Z-Score won't alert. CUSUM accumulates each small drop and raises an alarm over time.</p>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Z-Score catches sudden shocks. CUSUM catches gradual degradation through accumulation. They complement each other.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- 4. Isolation Forest -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s2">🌲</div>
+      <div class="section-title">
+        <h2>Tier 2 — Isolation Forest</h2>
+        <p>Liu et al., 2008 · Unsupervised anomaly detection via random partitioning</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr" id="iforest-tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Temel Fikir</h3>
+      <p>Klasik yöntemler: "Bu nokta normal dağılıma ne kadar benziyor?"<br/>Isolation Forest: <strong>"Bu noktayı diğerlerinden izole etmek ne kadar kolay?"</strong></p>
+      <h3>Nasıl Çalışıyor?</h3>
+      <ul>
+        <li>Rastgele bir özellik seç, rastgele bir eşik seç, veriyi ikiye böl</li>
+        <li>Bölmeye devam et — her nokta yalnız kalana kadar</li>
+        <li><strong>Normal gün:</strong> yoğun kümede → izole etmek için çok bölme gerekir (derin ağaç)</li>
+        <li><strong>Anomali gün:</strong> seyrek bölgede → az bölmeyle izole edilir (sığ ağaç)</li>
+      </ul>
+      <code>Normal gün   → 15-20 bölme gerekir
+Anomali gün  → 3-4 bölmede yalnız kalır</code>
+      <h3>200 Ağaç</h3>
+      <p>Tek ağaç rastgeleliğe bağlı. 200 ağaç kuruyoruz, sonunda ortalama izolasyon derinliği → [0,1] normalize → <strong>1.0 = en anormal</strong></p>
+      <h3>Neden 14 Özellik?</h3>
+      <p>Sadece "tüketim kaç kWh" değil, bağlamı da veriyoruz. 14 özellik 4 gruba ayrılır:</p>
+      <table>
+        <thead><tr><th>#</th><th>Özellik</th><th>Grup</th><th>Ne Anlatıyor?</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>month_sin</td><td>Mevsimsel</td><td>Ayın yıl içindeki sinüs projeksiyonu — Ocak ≈ Aralık</td></tr>
+          <tr><td>2</td><td>month_cos</td><td>Mevsimsel</td><td>Ayın yıl içindeki kosinüs projeksiyonu</td></tr>
+          <tr><td>3</td><td>day_of_year_sin</td><td>Mevsimsel</td><td>Günün yıl içindeki sinüs pozisyonu</td></tr>
+          <tr><td>4</td><td>day_of_year_cos</td><td>Mevsimsel</td><td>Günün yıl içindeki kosinüs pozisyonu</td></tr>
+          <tr><td>5</td><td>daily_active_kwh</td><td>Tüketim</td><td>Günlük toplam aktif tüketim (kWh)</td></tr>
+          <tr><td>6</td><td>daily_kwh_norm</td><td>Tüketim</td><td>Tüketim / 28 günlük medyan — "bu ay için normal mi?"</td></tr>
+          <tr><td>7</td><td>mean_active_intensity</td><td>Tüketim</td><td>Aktif saatlerde ortalama kWh/saat yoğunluğu</td></tr>
+          <tr><td>8</td><td>p10_active</td><td>Tüketim</td><td>Aktif saatlerin 10. yüzdilimi — kısmi arızayı yakalar</td></tr>
+          <tr><td>9</td><td>active_hours_count</td><td>Tüketim</td><td>Günde kaç saat aktif tüketim vardı</td></tr>
+          <tr><td>10</td><td>night_missing_frac</td><td>Tüketim</td><td>Beklenen aktif saatlerin kaçı &lt; 0.5 kWh kaldı</td></tr>
+          <tr><td>11</td><td>delta_1d</td><td>Değişim</td><td>Dünden bugüne tüketim farkı</td></tr>
+          <tr><td>12</td><td>delta_7d</td><td>Değişim</td><td>7 gün öncesine göre fark — haftalık drift</td></tr>
+          <tr><td>13</td><td>rolling_7d_std</td><td>Volatilite</td><td>Son 7 günün standart sapması — kısa dönem kararsızlık</td></tr>
+          <tr><td>14</td><td>rolling_28d_zscore</td><td>Volatilite</td><td>28 günlük baseline'a göre Z-skoru — uzun dönem sapma</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px;">Neden sinüs/kosinüs? Ayları sayı olarak versek model Aralık(12) ile Ocak(1) arasında 11 birim fark görür. Oysa mevsimsel olarak komşular. Döngüsel kodlama bu sorunu çözer.</p>
+      <div class="highlight-box">
+        <strong>Özet:</strong> Anormal günler doğası gereği yalnızdır — az bölmeyle bulunur. Normal günler kalabalık kümede saklanır. Isolation Forest bu farkı ölçer.
+      </div>
+    </div>
+
+    <div class="lang-content en" id="iforest-en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>Core Idea</h3>
+      <p>Classic methods ask: "How similar is this point to the normal distribution?"<br/>Isolation Forest asks: <strong>"How easy is it to isolate this point from others?"</strong></p>
+      <h3>How It Works</h3>
+      <ul>
+        <li>Pick a random feature, pick a random threshold, split data in two</li>
+        <li>Keep splitting until each point is isolated</li>
+        <li><strong>Normal day:</strong> in a dense cluster → needs many splits to isolate (deep tree)</li>
+        <li><strong>Anomaly day:</strong> in a sparse region → isolated in few splits (shallow tree)</li>
+      </ul>
+      <code>Normal day   → requires 15-20 splits
+Anomaly day  → isolated in 3-4 splits</code>
+      <h3>200 Trees</h3>
+      <p>Single tree is random. We build 200 trees, average isolation depth → normalized to [0,1] → <strong>1.0 = most anomalous</strong></p>
+      <h3>The 14 Features — 4 Groups</h3>
+      <table>
+        <thead><tr><th>#</th><th>Feature</th><th>Group</th><th>What It Captures</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>month_sin</td><td>Seasonal</td><td>Sine projection of month in year — Jan ≈ Dec cyclically</td></tr>
+          <tr><td>2</td><td>month_cos</td><td>Seasonal</td><td>Cosine projection of month in year</td></tr>
+          <tr><td>3</td><td>day_of_year_sin</td><td>Seasonal</td><td>Sine position of day within year</td></tr>
+          <tr><td>4</td><td>day_of_year_cos</td><td>Seasonal</td><td>Cosine position of day within year</td></tr>
+          <tr><td>5</td><td>daily_active_kwh</td><td>Consumption</td><td>Total daily active consumption (kWh)</td></tr>
+          <tr><td>6</td><td>daily_kwh_norm</td><td>Consumption</td><td>Consumption / 28-day median — "normal for this month?"</td></tr>
+          <tr><td>7</td><td>mean_active_intensity</td><td>Consumption</td><td>Average kWh/hour during active hours</td></tr>
+          <tr><td>8</td><td>p10_active</td><td>Consumption</td><td>10th percentile of active hours — catches partial faults</td></tr>
+          <tr><td>9</td><td>active_hours_count</td><td>Consumption</td><td>How many hours had active consumption that day</td></tr>
+          <tr><td>10</td><td>night_missing_frac</td><td>Consumption</td><td>Fraction of expected active hours below 0.5 kWh</td></tr>
+          <tr><td>11</td><td>delta_1d</td><td>Change</td><td>Consumption difference from yesterday</td></tr>
+          <tr><td>12</td><td>delta_7d</td><td>Change</td><td>Difference vs 7 days ago — weekly drift</td></tr>
+          <tr><td>13</td><td>rolling_7d_std</td><td>Volatility</td><td>Std dev of last 7 days — short-term instability</td></tr>
+          <tr><td>14</td><td>rolling_28d_zscore</td><td>Volatility</td><td>Z-score vs 28-day baseline — long-term deviation</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px;">Why sine/cosine? If months were encoded as numbers, the model sees December(12) and January(1) as 11 units apart. But seasonally they are neighbors. Cyclic encoding solves this.</p>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Anomalous days are inherently alone — easily isolated. Normal days hide in dense clusters. Isolation Forest measures this difference.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- 5. PELT -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s3">🔀</div>
+      <div class="section-title">
+        <h2>Tier 3 — PELT Change-Point Detection</h2>
+        <p>Killick et al., 2012 · Pruned Exact Linear Time · ruptures library</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr" id="pelt-tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Diğer Yöntemlerden Farkı</h3>
+      <p>Z-Score ve Isolation Forest her günü bağımsız değerlendirir.<br/>PELT sorar: <strong>"Bu seri hangi noktada kalıcı olarak farklı bir rejime geçti?"</strong></p>
+      <h3>Senaryo</h3>
+      <p>50 ampulden 10 tanesi Kasım'da yandı. O günden itibaren tüketim kalıcı düştü:</p>
+      <code>Oca–Ekim:    ~100 kWh/gün   ← rejim 1
+Kas–sonrası:  ~75 kWh/gün   ← rejim 2</code>
+      <p>Z-Score bunu kaçırabilir — hiçbir gün dramatik düşmedi, sadece seviye değişti. PELT tam bunu yakalar.</p>
+      <h3>Nasıl Çalışıyor?</h3>
+      <p>Seriyi segmentlere böler. Her segment kendi içinde homojen, segmentler birbirinden farklı olacak şekilde optimize eder:</p>
+      <div class="formula">Toplam maliyet = Σ(segment içi varyans) + λ × (segment sayısı)</div>
+      <h3>Parametreler</h3>
+      <table>
+        <thead><tr><th>Parametre</th><th>Değer</th><th>Anlamı</th></tr></thead>
+        <tbody>
+          <tr><td>model</td><td>rbf</td><td>Non-parametrik, Gaussian varsayımı yok</td></tr>
+          <tr><td>min_size</td><td>3</td><td>Segment en az 3 gün (gürültüyü engeller)</td></tr>
+          <tr><td>pen</td><td>10</td><td>Ceza parametresi λ</td></tr>
+        </tbody>
+      </table>
+      <h3>Kırılma Sınıflandırması</h3>
+      <table>
+        <thead><tr><th>Değişim</th><th>Yorum</th></tr></thead>
+        <tbody>
+          <tr><td>&lt; −20%</td><td>Ani ampul arızası</td></tr>
+          <tr><td>−5% ile −20%</td><td>Kısmi bozulma</td></tr>
+          <tr><td>&gt; +5%</td><td>Grid olayı / hat ekleme</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box">
+        <strong>Özet:</strong> Z-Score anlık şok, CUSUM birikim, PELT kalıcı rejim değişimi. Üçü birlikte anomalinin türünü ayırt eder.
+      </div>
+    </div>
+
+    <div class="lang-content en" id="pelt-en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>Difference from Other Methods</h3>
+      <p>Z-Score and Isolation Forest evaluate each day independently.<br/>PELT asks: <strong>"At which point did this series permanently shift to a different regime?"</strong></p>
+      <h3>Scenario</h3>
+      <p>10 of 50 bulbs burned out in November. Consumption permanently dropped from that point:</p>
+      <code>Jan–Oct:     ~100 kWh/day   ← regime 1
+Nov–onward:   ~75 kWh/day   ← regime 2</code>
+      <p>Z-Score may miss this — no single day dropped dramatically, only the level changed. PELT detects exactly this.</p>
+      <h3>How It Works</h3>
+      <p>Divides the series into segments. Optimizes so each segment is internally homogeneous and segments differ from each other:</p>
+      <div class="formula">Total cost = Σ(within-segment variance) + λ × (number of segments)</div>
+      <h3>Parameters</h3>
+      <table>
+        <thead><tr><th>Parameter</th><th>Value</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>model</td><td>rbf</td><td>Non-parametric, no Gaussian assumption</td></tr>
+          <tr><td>min_size</td><td>3</td><td>Segment must be ≥3 days (prevents noise)</td></tr>
+          <tr><td>pen</td><td>10</td><td>Penalty parameter λ</td></tr>
+        </tbody>
+      </table>
+      <h3>Change-Point Classification</h3>
+      <table>
+        <thead><tr><th>Change</th><th>Interpretation</th></tr></thead>
+        <tbody>
+          <tr><td>&lt; −20%</td><td>Sudden bulb failure</td></tr>
+          <tr><td>−5% to −20%</td><td>Partial degradation</td></tr>
+          <tr><td>&gt; +5%</td><td>Grid event / line addition</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Z-Score = sudden shock, CUSUM = gradual drift, PELT = permanent regime shift. Together they distinguish the type of anomaly.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- 6. Weighted Score Fusion -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s4">⚖️</div>
+      <div class="section-title">
+        <h2>Ensemble — Weighted Score Fusion</h2>
+        <p>3 katmanın çıktısını birleştiren puanlama sistemi</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr" id="ensemble-tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Formül</h3>
+      <div class="formula">S_final = 0.35 × S1 + 0.35 × S2 + 0.30 × S3</div>
+      <ul>
+        <li><strong>S1</strong> = max(T1a_zscore, T1b_cusum, T1c_rolling)</li>
+        <li><strong>S2</strong> = Isolation Forest severity [0,1]</li>
+        <li><strong>S3</strong> = ±2 gün içinde kırılma noktası varsa 1.0, yoksa 0.0</li>
+      </ul>
+      <h3>Ağırlıklar Neden Böyle?</h3>
+      <table>
+        <thead><tr><th>Katman</th><th>Ağırlık</th><th>Neden</th></tr></thead>
+        <tbody>
+          <tr><td>Tier 1</td><td>%35</td><td>Klasik, yorumlanabilir, referans yöntemler</td></tr>
+          <tr><td>Tier 2</td><td>%35</td><td>Çok boyutlu öğrenme, güçlü ama kara kutu</td></tr>
+          <tr><td>Tier 3</td><td>%30</td><td>Binary sinyal (0 veya 1), sürekli skor değil</td></tr>
+        </tbody>
+      </table>
+      <h3>Confidence (Güven Seviyesi)</h3>
+      <table>
+        <thead><tr><th>Koşul</th><th>Confidence</th></tr></thead>
+        <tbody>
+          <tr><td>score ≥ 0.45 veya vote ≥ 2</td><td><strong>High</strong></td></tr>
+          <tr><td>score ≥ 0.20 veya vote ≥ 1</td><td>Moderate</td></tr>
+          <tr><td>Diğer</td><td>Low</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box">
+        <strong>Özet:</strong> Üç bağımsız yöntemin hemfikir olduğu günler en güvenilir anomaliler. Bir jürinin 3 üyesi de "suçlu" derse mahkumiyet çok daha güçlüdür.
+      </div>
+    </div>
+
+    <div class="lang-content en" id="ensemble-en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>Formula</h3>
+      <div class="formula">S_final = 0.35 × S1 + 0.35 × S2 + 0.30 × S3</div>
+      <ul>
+        <li><strong>S1</strong> = max(T1a_zscore, T1b_cusum, T1c_rolling)</li>
+        <li><strong>S2</strong> = Isolation Forest severity [0,1]</li>
+        <li><strong>S3</strong> = 1.0 if change-point within ±2 days, else 0.0</li>
+      </ul>
+      <h3>Why These Weights?</h3>
+      <table>
+        <thead><tr><th>Layer</th><th>Weight</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Tier 1</td><td>35%</td><td>Classic, interpretable, reference methods</td></tr>
+          <tr><td>Tier 2</td><td>35%</td><td>Multidimensional learning, powerful but black-box</td></tr>
+          <tr><td>Tier 3</td><td>30%</td><td>Binary signal (0 or 1), not a continuous score</td></tr>
+        </tbody>
+      </table>
+      <h3>Confidence Level</h3>
+      <table>
+        <thead><tr><th>Condition</th><th>Confidence</th></tr></thead>
+        <tbody>
+          <tr><td>score ≥ 0.45 or votes ≥ 2</td><td><strong>High</strong></td></tr>
+          <tr><td>score ≥ 0.20 or votes ≥ 1</td><td>Moderate</td></tr>
+          <tr><td>Otherwise</td><td>Low</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Days where all three independent methods agree are the most reliable anomalies. Like a jury — if all 3 members say "guilty", the verdict is much stronger.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- 7. Bootstrap Jaccard + Silhouette -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon s6">📐</div>
+      <div class="section-title">
+        <h2>Evaluation — Bootstrap Jaccard & Silhouette Score</h2>
+        <p>Model güvenilirliği ve kümeleme kalitesi metrikleri</p>
+      </div>
+    </div>
+
+    <div class="lang-content tr" id="eval-tr">
+      <span class="lang-tag tr-tag">Türkçe</span>
+      <h3>Bootstrap Jaccard Stability</h3>
+      <p><strong>Ne Soruyor?</strong> "Isolation Forest'ı farklı random seed ile çalıştırırsam hep aynı günleri mi flagliyor?"</p>
+      <p>5 farklı seed (0,1,2,3,4) ile çalıştır → her biri bir küme. Her ikili kombinasyon için:</p>
+      <div class="formula">Jaccard(A, B) = |A ∩ B| / |A ∪ B|
+             = Ortak flaglenen / En az birinde flaglenen</div>
+      <p><strong>Sonuç: 0.922</strong> → 5 farklı seed'de flaglenen günlerin %92.2'si örtüşüyor.</p>
+      <p><strong>Neden önemli?</strong> Jüri "seed değiştirsen farklı sonuç çıkar mıydı?" diye sorabilir. Cevabın: "Hayır, 0.922 Jaccard ile sonuçlar neredeyse aynı."</p>
+
+      <hr class="divider"/>
+
+      <h3>Silhouette Score</h3>
+      <p><strong>Ne Soruyor?</strong> "Anomali diye etiketlediğim günler gerçekten normal günlerden ayrışıyor mu?"</p>
+      <p>Ground truth olmadan kümelerin kalitesini ölçer. Her gün için:</p>
+      <div class="formula">a = Kendi kümesindeki günlere ortalama uzaklık
+b = En yakın diğer kümedeki günlere ortalama uzaklık
+
+Silhouette = (b − a) / max(a, b)</div>
+      <table>
+        <thead><tr><th>Değer</th><th>Anlam</th></tr></thead>
+        <tbody>
+          <tr><td>+1'e yakın</td><td>Kümeler mükemmel ayrışmış</td></tr>
+          <tr><td>0'a yakın</td><td>Kümeler iç içe geçmiş</td></tr>
+          <tr><td>−1'e yakın</td><td>Yanlış kümelenmiş</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Sonuç: 0.509</strong> → Anomali günler ile normal günler makul ölçüde ayrışıyor.</p>
+      <div class="highlight-box">
+        <strong>Özet:</strong> Jaccard 0.922 = model kararlı, seed'e bağımlı değil. Silhouette 0.509 = anomaliler gerçekten farklı. İkisi birlikte: "Bulgular tekrarlanabilir ve istatistiksel olarak anlamlı."
+      </div>
+    </div>
+
+    <div class="lang-content en" id="eval-en">
+      <span class="lang-tag en-tag">English</span>
+      <h3>Bootstrap Jaccard Stability</h3>
+      <p><strong>What Does It Ask?</strong> "If I run Isolation Forest with a different random seed, does it flag the same days?"</p>
+      <p>Run with 5 seeds (0,1,2,3,4) → each produces a set of flagged days. For every pair:</p>
+      <div class="formula">Jaccard(A, B) = |A ∩ B| / |A ∪ B|
+             = Commonly flagged / Flagged by at least one</div>
+      <p><strong>Result: 0.922</strong> → 92.2% of flagged days overlap across 5 different seeds.</p>
+      <p><strong>Why it matters:</strong> If a jury asks "would results change with a different seed?" — your answer: "No, 0.922 Jaccard means results are nearly identical."</p>
+
+      <hr class="divider"/>
+
+      <h3>Silhouette Score</h3>
+      <p><strong>What Does It Ask?</strong> "Do the days I labeled as anomalies actually differ from normal days?"</p>
+      <p>Measures cluster quality without ground truth labels. For each day:</p>
+      <div class="formula">a = Average distance to days in same cluster
+b = Average distance to days in nearest other cluster
+
+Silhouette = (b − a) / max(a, b)</div>
+      <table>
+        <thead><tr><th>Value</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Close to +1</td><td>Clusters are perfectly separated</td></tr>
+          <tr><td>Close to 0</td><td>Clusters overlap</td></tr>
+          <tr><td>Close to −1</td><td>Misclassified</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Result: 0.509</strong> → Anomaly days are reasonably well separated from normal days.</p>
+      <div class="highlight-box">
+        <strong>Summary:</strong> Jaccard 0.922 = model is stable, not seed-dependent. Silhouette 0.509 = anomalies are genuinely different. Together: "Findings are reproducible and statistically meaningful."
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function setLang(lang) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    document.querySelectorAll('.lang-content').forEach(el => {
+      el.classList.remove('visible');
+    });
+
+    if (lang === 'both') {
+      document.querySelectorAll('.lang-content').forEach(el => el.classList.add('visible'));
+    } else {
+      document.querySelectorAll('.' + lang).forEach(el => el.classList.add('visible'));
+    }
+  }
+
+  // Default: Turkish
+  document.querySelectorAll('.tr').forEach(el => el.classList.add('visible'));
+</script>
+</body>
+</html>

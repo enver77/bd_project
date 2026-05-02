@@ -1,0 +1,168 @@
+{
+  "method": "PELT (ruptures, model=rbf, MBIC-like penalty)",
+  "kwh_series": {
+    "n_changepoints": 7,
+    "changepoints": [
+      {
+        "changepoint_date": "2025-03-02",
+        "mean_before": 90.9765,
+        "mean_after": 84.7341,
+        "delta": -6.2424,
+        "relative_change": -0.0686,
+        "type": "partial_fault"
+      },
+      {
+        "changepoint_date": "2025-04-21",
+        "mean_before": 76.168,
+        "mean_after": 70.4477,
+        "delta": -5.7203,
+        "relative_change": -0.0751,
+        "type": "partial_fault"
+      },
+      {
+        "changepoint_date": "2025-08-29",
+        "mean_before": 67.7082,
+        "mean_after": 79.952,
+        "delta": 12.2438,
+        "relative_change": 0.1808,
+        "type": "grid_increase"
+      },
+      {
+        "changepoint_date": "2025-11-17",
+        "mean_before": 91.5414,
+        "mean_after": 102.2094,
+        "delta": 10.6681,
+        "relative_change": 0.1165,
+        "type": "grid_increase"
+      },
+      {
+        "changepoint_date": "2025-12-07",
+        "mean_before": 103.992,
+        "mean_after": 79.4461,
+        "delta": -24.5459,
+        "relative_change": -0.236,
+        "type": "sudden_drop"
+      },
+      {
+        "changepoint_date": "2026-01-06",
+        "mean_before": 67.8533,
+        "mean_after": 94.6534,
+        "delta": 26.8001,
+        "relative_change": 0.395,
+        "type": "grid_increase"
+      },
+      {
+        "changepoint_date": "2026-02-15",
+        "mean_before": 104.4054,
+        "mean_after": 0.0,
+        "delta": -104.4054,
+        "relative_change": -1.0,
+        "type": "sudden_drop"
+      }
+    ]
+  },
+  "intensity_series": {
+    "n_changepoints": 5,
+    "changepoints": [
+      {
+        "changepoint_date": "2025-06-10",
+        "mean_before": 6.4124,
+        "mean_after": 5.9647,
+        "delta": -0.4477,
+        "relative_change": -0.0698,
+        "type": "partial_fault"
+      },
+      {
+        "changepoint_date": "2025-07-20",
+        "mean_before": 5.7975,
+        "mean_after": 6.6066,
+        "delta": 0.809,
+        "relative_change": 0.1395,
+        "type": "grid_increase"
+      },
+      {
+        "changepoint_date": "2025-12-07",
+        "mean_before": 6.9328,
+        "mean_after": 5.2964,
+        "delta": -1.6364,
+        "relative_change": -0.236,
+        "type": "sudden_drop"
+      },
+      {
+        "changepoint_date": "2026-01-06",
+        "mean_before": 4.5236,
+        "mean_after": 6.3102,
+        "delta": 1.7867,
+        "relative_change": 0.395,
+        "type": "grid_increase"
+      },
+      {
+        "changepoint_date": "2026-02-15",
+        "mean_before": 10.4982,
+        "mean_after": 0.0,
+        "delta": -10.4982,
+        "relative_change": -1.0,
+        "type": "sudden_drop"
+      }
+    ]
+  },
+  "sensitivity": {
+    "5": {
+      "n_changepoints": 9,
+      "dates": [
+        "2025-02-25",
+        "2025-04-06",
+        "2025-05-06",
+        "2025-07-25",
+        "2025-08-29",
+        "2025-11-17",
+        "2025-12-07",
+        "2026-01-06",
+        "2026-02-15"
+      ]
+    },
+    "10": {
+      "n_changepoints": 7,
+      "dates": [
+        "2025-03-02",
+        "2025-04-21",
+        "2025-08-29",
+        "2025-11-17",
+        "2025-12-07",
+        "2026-01-06",
+        "2026-02-15"
+      ]
+    },
+    "20": {
+      "n_changepoints": 3,
+      "dates": [
+        "2025-04-11",
+        "2025-08-29",
+        "2026-02-15"
+      ]
+    }
+  },
+  "n_flagged_days": 20,
+  "flagged_dates": [
+    "2025-02-28",
+    "2025-03-01",
+    "2025-03-02",
+    "2025-03-03",
+    "2025-03-04",
+    "2025-04-19",
+    "2025-04-20",
+    "2025-04-21",
+    "2025-04-22",
+    "2025-04-23",
+    "2025-12-05",
+    "2025-12-06",
+    "2025-12-07",
+    "2025-12-08",
+    "2025-12-09",
+    "2026-02-13",
+    "2026-02-14",
+    "2026-02-15",
+    "2026-02-16",
+    "2026-02-17"
+  ]
+}
